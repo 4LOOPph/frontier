@@ -1,0 +1,14 @@
+{
+  "name": "frontier",
+  "version": "1.0.0",
+  "authors": [
+    "4LOOP <info@4loop.ph>"
+  ],
+  "description": "Collect, configure, and analyze your data to reach the right audience",
+  "main": "dist/frontier.min.js",
+  "license": "MIT",
+  "homepage": "http://fourloopph.bitbucket.org/developers/#/frontier",
+  "dependencies": {
+    "angular": "*"
+  }
+}
