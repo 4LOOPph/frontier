@@ -2,6 +2,10 @@
 
 =======================
 
+
+[<img src="http://fourloopph.bitbucket.org/developers/images/devLogo.png" alt="4LOOP Logo" width="1300px" height="192px" />](http://fourloopph.bitbucket.org/developers/)
+
+
 Frontier SDK to connect to Frontier's Analytics API
 
 
