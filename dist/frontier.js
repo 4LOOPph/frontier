@@ -16496,7 +16496,7 @@
 
     var unknown = '-';
 
-    var API_HOST = 'http://52.64.27.145:5001';
+    var API_HOST = 'http://54.206.38.223:5001';
     // var API_HOST = 'http://localhost:3000';
     var API_VERSION = '/analytics/1.0';
 
