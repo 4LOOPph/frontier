@@ -16673,28 +16673,27 @@
             },
 
             IsInitialized: function() {
-                return Cookies.get('frontierAnalytics_Session') ? true : false;
+                return Cookies.get('frontierAnalytics_Session');
             },
 
             IsEnableTrackEvent : function(){
-                return Cookies.get('frontierAnalytics_trackEvent') ? true : false;
+                return Cookies.get('frontierAnalytics_trackEvent');
             },
 
             IsEnableTrackPage: function(){
-                return Cookies.get('frontierAnalytics_trackPage') ? true : false;
+                return Cookies.get('frontierAnalytics_trackPage');
             },
 
             IsEnableTrackView: function(){
-                Cookies.set('frontierAnalytics_trackView', isEnable);
-                return Cookies.get('frontierAnalytics_trackView') ? true : false;
+                return Cookies.get('frontierAnalytics_trackView');
             },
 
             IsEnableTrackApp: function(){
-                return Cookies.get('frontierAnalytics_trackApp') ? true : false;
+                return Cookies.get('frontierAnalytics_trackApp');
             },
 
             IsEnableTrackDevice: function(){
-                return Cookies.get('frontierAnalytics_trackDevice') ? true : false;
+                return Cookies.get('frontierAnalytics_trackDevice');
             },
 
             checkSessionToken: function(data) {
@@ -16997,26 +16996,44 @@
 
         return {
             enableAppDebugging: function(isEnable) {
+                if(_.isEmpty(isEnable)){
+                    isEnable = false;
+                }
                 Cookies.set('frontierAnalytics_Debugging', isEnable);
             },
 
             enableTrackEvent : function(isEnable){
+                if(_.isEmpty(isEnable)){
+                    isEnable = false;
+                }
                 Cookies.set('frontierAnalytics_trackEvent', isEnable);
             },
 
             enableTrackPage: function(isEnable){
+                if(_.isEmpty(isEnable)){
+                    isEnable = false;
+                }
                 Cookies.set('frontierAnalytics_trackPage', isEnable);
             },
 
             enableTrackView: function(isEnable){
+                if(_.isEmpty(isEnable)){
+                    isEnable = false;
+                }
                 Cookies.set('frontierAnalytics_trackView', isEnable);
             },
 
             enableTrackApp: function(isEnable){
+                if(_.isEmpty(isEnable)){
+                    isEnable = false;
+                }
                 Cookies.set('frontierAnalytics_trackApp', isEnable);
             },
 
             enableTrackDevice: function(isEnable){
+                if(_.isEmpty(isEnable)){
+                    isEnable = false;
+                }
                 Cookies.set('frontierAnalytics_trackDevice', isEnable);
             },
 
