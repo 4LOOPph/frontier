@@ -24,6 +24,8 @@ npm i frontier
 
 ```html
 <script src="http://fourloopph.bitbucket.org/developers/bin/analytics/v1/js/frontier.min.js"></script>
+OR
+<script src="https://cdn.rawgit.com/4LOOPph/frontier/master/dist/frontier.min.js"></script>
 ```
 
 #JavaScript Usage
