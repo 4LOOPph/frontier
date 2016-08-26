@@ -16557,20 +16557,27 @@
         return uuid;
     }
 
-    function urlBase64Decode(str){
+    function urlBase64Decode(str) {
         var output = str.replace(/-/g, '+').replace(/_/g, '/');
         switch (output.length % 4) {
-            case 0: { break; }
-            case 2: { output += '=='; break; }
-            case 3: { output += '='; break; }
-            default: {
-                throw 'Illegal base64url string!';
-            }
+            case 0:
+                {
+                    break; }
+            case 2:
+                { output += '==';
+                    break; }
+            case 3:
+                { output += '=';
+                    break; }
+            default:
+                {
+                    throw 'Illegal base64url string!';
+                }
         }
         return decodeURIComponent(escape(window.atob(output)));
     }
 
-    function decodeToken(token){
+    function decodeToken(token) {
         var parts = token.split('.');
 
         if (parts.length !== 3) {
@@ -16585,11 +16592,11 @@
         return JSON.parse(decoded);
     }
 
-    function getTokenExpirationDate(token){
+    function getTokenExpirationDate(token) {
         var decoded;
         decoded = decodeToken(token);
 
-        if(typeof decoded.exp === "undefined") {
+        if (typeof decoded.exp === "undefined") {
             return null;
         }
 
@@ -16633,7 +16640,7 @@
             },
 
             getClientID: function() {
-                return Cookies.get('frontierAnalytics_accessCode') ? Cookies.get('frontierAnalytics_accessCode') : '';
+                return (!_.isEmpty(Cookies.get('frontierAnalytics_accessCode'))) ? Cookies.get('frontierAnalytics_accessCode') : '';
             },
 
             setClientTrackerName: function(trackerName) {
@@ -16641,7 +16648,7 @@
             },
 
             getClientTrackerName: function() {
-                return Cookies.get('frontierAnalytics_trackerName') ? Cookies.get('frontierAnalytics_trackerName') : '';
+                return (!_.isEmpty(Cookies.get('frontierAnalytics_trackerName'))) ? Cookies.get('frontierAnalytics_trackerName') : '';
             },
 
             setEncode: function(code) {
@@ -16649,7 +16656,7 @@
             },
 
             getEncode: function() {
-                return Cookies.get('frontierAnalytics_encode') ? Cookies.get('frontierAnalytics_encode') : '';
+                return (!_.isEmpty(Cookies.get('frontierAnalytics_encode'))) ? Cookies.get('frontierAnalytics_encode') : '';
             },
 
             setSessionID: function(session) {
@@ -16657,7 +16664,7 @@
             },
 
             getSessionID: function() {
-                return Cookies.get('frontierAnalytics_Session') ? Cookies.get('frontierAnalytics_Session') : null;
+                return (!_.isEmpty(Cookies.get('frontierAnalytics_Session'))) ? Cookies.get('frontierAnalytics_Session') : null;
             },
 
             setClientUserID: function(userId) {
@@ -16665,35 +16672,35 @@
             },
 
             getClientUserID: function() {
-                return Cookies.get('frontierAnalytics_userId') ? Cookies.get('frontierAnalytics_userId') : '';
+                return (!_.isEmpty(Cookies.get('frontierAnalytics_userId'))) ? Cookies.get('frontierAnalytics_userId') : '';
             },
 
             isEnableDebugging: function() {
-                return Cookies.get('frontierAnalytics_Debugging') ? true : false;
+                return JSON.parse(Cookies.get('frontierAnalytics_Debugging'));
             },
 
             IsInitialized: function() {
                 return Cookies.get('frontierAnalytics_Session');
             },
 
-            IsEnableTrackEvent : function(){
-                return Cookies.get('frontierAnalytics_trackEvent');
+            IsEnableTrackEvent: function() {
+                return JSON.parse(Cookies.get('frontierAnalytics_trackEvent'));
             },
 
-            IsEnableTrackPage: function(){
-                return Cookies.get('frontierAnalytics_trackPage');
+            IsEnableTrackPage: function() {
+                return JSON.parse(Cookies.get('frontierAnalytics_trackPage'));
             },
 
-            IsEnableTrackView: function(){
-                return Cookies.get('frontierAnalytics_trackView');
+            IsEnableTrackView: function() {
+                return JSON.parse(Cookies.get('frontierAnalytics_trackView'));
             },
 
-            IsEnableTrackApp: function(){
-                return Cookies.get('frontierAnalytics_trackApp');
+            IsEnableTrackApp: function() {
+                return JSON.parse(Cookies.get('frontierAnalytics_trackApp'));
             },
 
-            IsEnableTrackDevice: function(){
-                return Cookies.get('frontierAnalytics_trackDevice');
+            IsEnableTrackDevice: function() {
+                return JSON.parse(Cookies.get('frontierAnalytics_trackDevice'));
             },
 
             checkSessionToken: function(data) {
@@ -16730,11 +16737,11 @@
                 data.sessionID = this.getSessionID();
                 var bool = isTokenExpired(data.sessionID);
                 if (this.isEnableDebugging()) {
-                    console.info('data: ',data);
-                    console.info('isTokenExpired: ',bool);
+                    console.info('data: ', data);
+                    console.info('isTokenExpired: ', bool);
                 }
 
-                if(bool){
+                if (bool) {
                     isSuccess = true;
                 }
                 return isSuccess;
@@ -16765,7 +16772,7 @@
                 return viewPortWidth + 'x' + viewPortHeight;
             },
 
-            getScreenResolution: function () {
+            getScreenResolution: function() {
                 var screenHeight;
                 var screenWidth;
 
@@ -16788,7 +16795,7 @@
                 return userLang;
             },
 
-            getOperatingSystem: function () {
+            getOperatingSystem: function() {
                 var nAgt = navigator.userAgent;
                 var os = unknown;
 
@@ -16933,28 +16940,28 @@
                 if (action === 'send') {
                     switch (method) {
                         case 'page':
-                            route =  API_HOST + API_VERSION + '/send/page';
+                            route = API_HOST + API_VERSION + '/send/page';
                             break;
                         case 'app':
-                            route =  API_HOST + API_VERSION + '/send/app';
+                            route = API_HOST + API_VERSION + '/send/app';
                             break;
                         case 'screen':
-                            route =  API_HOST + API_VERSION + '/send/screen';
+                            route = API_HOST + API_VERSION + '/send/screen';
                             break;
                         case 'events':
-                            route =  API_HOST + API_VERSION + '/send/events';
+                            route = API_HOST + API_VERSION + '/send/events';
                             break;
                         case 'devices':
-                            route =  API_HOST + API_VERSION + '/send/devices';
+                            route = API_HOST + API_VERSION + '/send/devices';
                             break;
                         case 'geolocation':
-                            route =  API_HOST + API_VERSION + '/send/geolocation';
+                            route = API_HOST + API_VERSION + '/send/geolocation';
                             break;
                         case 'user':
                             data = {
                                 userId: data
                             };
-                            route =  API_HOST + API_VERSION + '/send/user';
+                            route = API_HOST + API_VERSION + '/send/user';
                             break;
                     }
 
@@ -16966,10 +16973,10 @@
                 } else if (action === 'ecommerce') {
                     switch (method) {
                         case 'addTransaction':
-                            route =  API_HOST + API_VERSION + '/ecommerce/transaction';
+                            route = API_HOST + API_VERSION + '/ecommerce/transaction';
                             break;
                         case 'addItem':
-                            route =  API_HOST + API_VERSION + '/ecommerce/item';
+                            route = API_HOST + API_VERSION + '/ecommerce/item';
                             break;
                     }
                     xhr.open('POST', route, false);
@@ -16996,42 +17003,42 @@
 
         return {
             enableAppDebugging: function(isEnable) {
-                if(_.isEmpty(isEnable)){
+                if (_.isEmpty(isEnable)) {
                     isEnable = false;
                 }
                 Cookies.set('frontierAnalytics_Debugging', isEnable);
             },
 
-            enableTrackEvent : function(isEnable){
-                if(_.isEmpty(isEnable)){
+            enableTrackEvent: function(isEnable) {
+                if (_.isEmpty(isEnable)) {
                     isEnable = false;
                 }
                 Cookies.set('frontierAnalytics_trackEvent', isEnable);
             },
 
-            enableTrackPage: function(isEnable){
-                if(_.isEmpty(isEnable)){
+            enableTrackPage: function(isEnable) {
+                if (_.isEmpty(isEnable)) {
                     isEnable = false;
                 }
                 Cookies.set('frontierAnalytics_trackPage', isEnable);
             },
 
-            enableTrackView: function(isEnable){
-                if(_.isEmpty(isEnable)){
+            enableTrackView: function(isEnable) {
+                if (_.isEmpty(isEnable)) {
                     isEnable = false;
                 }
                 Cookies.set('frontierAnalytics_trackView', isEnable);
             },
 
-            enableTrackApp: function(isEnable){
-                if(_.isEmpty(isEnable)){
+            enableTrackApp: function(isEnable) {
+                if (_.isEmpty(isEnable)) {
                     isEnable = false;
                 }
                 Cookies.set('frontierAnalytics_trackApp', isEnable);
             },
 
-            enableTrackDevice: function(isEnable){
-                if(_.isEmpty(isEnable)){
+            enableTrackDevice: function(isEnable) {
+                if (_.isEmpty(isEnable)) {
                     isEnable = false;
                 }
                 Cookies.set('frontierAnalytics_trackDevice', isEnable);
@@ -17211,7 +17218,7 @@
                         console.info('lib.checkSessionToken(options): ' + checkSessionToken);
                     }
 
-                    if(lib.IsEnableTrackPage){
+                    if (lib.IsEnableTrackPage) {
                         if (checkSessionToken) {
                             if (lib.isEnableDebugging()) {
                                 console.info('SHOW AFTER SESSION IS REFRESH : ' + lib.getSessionID());
@@ -17264,7 +17271,7 @@
                         console.info('lib.checkSessionToken(options): ' + checkSessionToken);
                     }
 
-                    if(lib.IsEnableTrackEvent){
+                    if (lib.IsEnableTrackEvent) {
                         if (checkSessionToken) {
                             if (lib.isEnableDebugging()) {
                                 console.info('SHOW AFTER SESSION IS REFRESH : ' + lib.getSessionID());
@@ -17320,7 +17327,7 @@
                         console.info('checkSessionToken: ' + checkSessionToken);
                     }
 
-                    if(lib.IsEnableTrackApp){
+                    if (lib.IsEnableTrackApp) {
                         if (checkSessionToken) {
                             if (lib.isEnableDebugging()) {
                                 console.info('SHOW AFTER SESSION IS REFRESH : ', lib.getSessionID());
@@ -17357,7 +17364,7 @@
                         Debug.WriteLine('checkSessionToken: ' + checkSessionToken);
                     }
 
-                    if(lib.IsEnableTrackView){
+                    if (lib.IsEnableTrackView) {
                         if (checkSessionToken) {
                             if (lib.isEnableDebugging()) {
                                 console.info('SHOW AFTER SESSION IS REFRESH : ', lib.getSessionID());
@@ -17430,7 +17437,7 @@
                         Debug.WriteLine('checkSessionToken: ' + checkSessionToken);
                     }
 
-                    if(lib.IsEnableTrackDevice){
+                    if (lib.IsEnableTrackDevice) {
                         if (checkSessionToken) {
                             if (lib.isEnableDebugging()) {
                                 console.info('SHOW AFTER SESSION IS REFRESH : ', lib.getSessionID());
