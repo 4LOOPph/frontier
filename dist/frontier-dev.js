@@ -16507,521 +16507,543 @@
 
 var API_HOST = 'http://localhost:4000'; // LOCAL
 
-
-  //===========================================================================================
-  //                              FRONTIER'S METHOD'S AND PROCEDURES
-  //===========================================================================================
-
-  var unknown = '-';
-  var API_VERSION = '/analytics/1.0';
-
-  var isMobile = {
-      Android: function() {
-          return navigator.userAgent.match(/Android/i);
-      },
-      BlackBerry: function() {
-          return navigator.userAgent.match(/BlackBerry/i);
-      },
-      iOS: function() {
-          return navigator.userAgent.match(/iPhone|iPad|iPod/i);
-      },
-      Opera: function() {
-          return navigator.userAgent.match(/Opera Mini/i);
-      },
-      Windows: function() {
-          return navigator.userAgent.match(/IEMobile/i) || navigator.userAgent.match(/WPDesktop/i);
-      },
-      any: function() {
-          return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows());
-      }
-  };
-
-  var generate = {
-      String: function(length) {
-          var text = '';
-          var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
-          for (var i = 0; i < length; i++) {
-              text += possible.charAt(Math.floor(Math.random() * possible.length));
-          }
-
-          return text;
-      },
-      NumberString: function(length) {
-          var text = '';
-          var possible = '0123456789';
-
-          for (var i = 0; i < length; i++) {
-              text += possible.charAt(Math.floor(Math.random() * possible.length));
-          }
-
-          return text;
-      }
-  };
-
-  function generateUUID() {
-      var d = new Date().getTime();
-      if (window.performance && typeof window.performance.now === 'function') {
-          d += performance.now(); //use high-precision timer if available
-      }
-      var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-          var r = ((d + Math.random() * 16) % 16 | 0);
-          d = Math.floor(d / 16);
-          return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-      });
-      return uuid;
-  }
-
-  function urlBase64Decode(str) {
-      var output = str.replace(/-/g, '+').replace(/_/g, '/');
-      switch (output.length % 4) {
-          case 0:
-              {
-                  break; }
-          case 2:
-              { output += '==';
-                  break; }
-          case 3:
-              { output += '=';
-                  break; }
-          default:
-              {
-                  throw 'Illegal base64url string!';
-              }
-      }
-      return decodeURIComponent(escape(window.atob(output)));
-  }
-
-  function decodeToken(token) {
-      var parts = token.split('.');
-
-      if (parts.length !== 3) {
-          throw new Error('JWT must have 3 parts');
-      }
-
-      var decoded = urlBase64Decode(parts[1]);
-      if (!decoded) {
-          throw new Error('Cannot decode the token');
-      }
-
-      return JSON.parse(decoded);
-  }
-
-  function getTokenExpirationDate(token) {
-      var decoded;
-      decoded = decodeToken(token);
-
-      if (typeof decoded.exp === "undefined") {
-          return null;
-      }
-
-      var d = new Date(0); // The 0 here is the key, which sets the date to the epoch
-      d.setUTCSeconds(decoded.exp);
-
-      return d;
-  }
-
-  function isTokenExpired(token, offsetSeconds) {
-      var d = getTokenExpirationDate(token);
-      offsetSeconds = offsetSeconds || 0;
-      if (d === null) {
-          return false;
-      }
-
-      // Token expired?
-      return !(d.valueOf() > (new Date().valueOf() + (offsetSeconds * 1000)));
-  }
-
-
-  //===========================================================================================
-  //                           FRONTIER'S GETTERS AND SETTERS
-  //===========================================================================================
-
-  function FrontierLib() {
-      return {
-          clearSettings: function() {
-              Cookies.remove('LoopAnalytics_trackerName');
-              Cookies.remove('LoopAnalytics_Session');
-              Cookies.remove('LoopAnalytics_userId');
-              Cookies.remove('LoopAnalytics_accessCode');
-              Cookies.remove('LoopAnalytics_encode');
-
-              if (this.isEnableDebugging()) {
-                  console.info('Clear App Settings');
-              }
-          },
-
-          setClientID: function(accessCode) {
-              Cookies.set('frontierAnalytics_accessCode', accessCode);
-          },
-
-          getClientID: function() {
-              return (!_.isEmpty(Cookies.get('frontierAnalytics_accessCode'))) ? Cookies.get('frontierAnalytics_accessCode') : '';
-          },
-
-          setClientTrackerName: function(trackerName) {
-              Cookies.set('frontierAnalytics_trackerName', trackerName);
-          },
-
-          getClientTrackerName: function() {
-              return (!_.isEmpty(Cookies.get('frontierAnalytics_trackerName'))) ? Cookies.get('frontierAnalytics_trackerName') : '';
-          },
-
-          setEncode: function(code) {
-              Cookies.set('frontierAnalytics_encode', code);
-          },
-
-          getEncode: function() {
-              return (!_.isEmpty(Cookies.get('frontierAnalytics_encode'))) ? Cookies.get('frontierAnalytics_encode') : '';
-          },
-
-          setSessionID: function(session) {
-              Cookies.set('frontierAnalytics_Session', session);
-          },
-
-          getSessionID: function() {
-              return (!_.isEmpty(Cookies.get('frontierAnalytics_Session'))) ? Cookies.get('frontierAnalytics_Session') : null;
-          },
-
-          setClientUserID: function(userId) {
-              Cookies.set('frontierAnalytics_userId', userId);
-          },
-
-          getClientUserID: function() {
-              return (!_.isEmpty(Cookies.get('frontierAnalytics_userId'))) ? Cookies.get('frontierAnalytics_userId') : '';
-          },
-
-          isEnableDebugging: function() {
-              return JSON.parse(Cookies.get('frontierAnalytics_Debugging'));
-          },
-
-          IsInitialized: function() {
-              return Cookies.get('frontierAnalytics_Session');
-          },
-
-          IsEnableTrackEvent: function() {
-              return JSON.parse(Cookies.get('frontierAnalytics_trackEvent'));
-          },
-
-          IsEnableTrackPage: function() {
-              return JSON.parse(Cookies.get('frontierAnalytics_trackPage'));
-          },
-
-          IsEnableTrackView: function() {
-              return JSON.parse(Cookies.get('frontierAnalytics_trackView'));
-          },
-
-          IsEnableTrackApp: function() {
-              return JSON.parse(Cookies.get('frontierAnalytics_trackApp'));
-          },
-
-          IsEnableTrackDevice: function() {
-              return JSON.parse(Cookies.get('frontierAnalytics_trackDevice'));
-          },
-
-          checkSessionToken: function(data) {
-              var isSuccess = false;
-
-              /*var API_HOST = 'http://localhost:3000';
-              var API_VERSION = '/analytics/1.0';
-
-              var xhr = new XMLHttpRequest();
-              xhr.open('POST', API_HOST + API_VERSION + '/auth/refreshToken', false);
-
-              xhr.setRequestHeader('accesscode', data.accessCode);
-              xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
-
-              data.sessionID = this.getSessionID();
-              xhr.send(JSON.stringify(data));
-
-              if (xhr.status === 200 && xhr.statusText === 'OK') {
-                  var resp = JSON.parse(xhr.response);
-
-                  if(resp.SessionID){
-                      if (this.isEnableDebugging()) {
-                          console.info('refreshToken NEW SessionID: ',resp.SessionID);
-                      }
-                      this.setSessionID(resp.SessionID);
-                      isSuccess =  true;
-                  }
-                  if (this.isEnableDebugging()) {
-                      console.info('refreshToken isSuccess: ',isSuccess);
-                  }
-                  return isSuccess;
-              }*/
-
-              data.sessionID = this.getSessionID();
-              var bool = isTokenExpired(data.sessionID);
-              if (this.isEnableDebugging()) {
-                  console.info('data: ', data);
-                  console.info('isTokenExpired: ', bool);
-              }
-
-              if (bool) {
-                  isSuccess = true;
-              }
-              return isSuccess;
-          },
-
-          getPlatformViewPortSize: function() {
-              var viewPortWidth;
-              var viewPortHeight;
-
-              // the more standards compliant browsers (mozilla/netscape/opera/IE7) use window.innerWidth and window.innerHeight
-              if (typeof window.innerWidth != 'undefined') {
-                  viewPortWidth = window.innerWidth;
-                  viewPortHeight = window.innerHeight;
-              }
-
-              // IE6 in standards compliant mode (i.e. with a valid doctype as the first line in the document)
-              else if (typeof document.documentElement != 'undefined' && typeof document.documentElement.clientWidth !=
-                  'undefined' && document.documentElement.clientWidth !== 0) {
-                  viewPortWidth = document.documentElement.clientWidth;
-                  viewPortHeight = document.documentElement.clientHeight;
-              }
-
-              // older versions of IE
-              else {
-                  viewPortWidth = document.getElementsByTagName('body')[0].clientWidth;
-                  viewPortHeight = document.getElementsByTagName('body')[0].clientHeight;
-              }
-              return viewPortWidth + 'x' + viewPortHeight;
-          },
-
-          getScreenResolution: function() {
-              var screenHeight;
-              var screenWidth;
-
-              if (typeof window.screen.availHeight != 'undefined') {
-                  screenWidth = window.screen.availWidth;
-                  screenHeight = window.screen.availHeight;
-              }
-
-              return screenWidth + 'x' + screenHeight;
-          },
-
-          getScreenColorDepth: function() {
-              if (!_.isUndefined(window.screen.colorDepth)) {
-                  return window.screen.colorDepth + '-bits';
-              }
-          },
-
-          getPlatformLanguage: function() {
-              var userLang = navigator.language || navigator.userLanguage;
-              return userLang;
-          },
-
-          getOperatingSystem: function() {
-              var nAgt = navigator.userAgent;
-              var os = unknown;
-
-              var clientStrings = [{
-                  s: 'Windows 10',
-                  r: /(Windows 10.0|Windows NT 10.0)/
-              }, {
-                  s: 'Windows 8.1',
-                  r: /(Windows 8.1|Windows NT 6.3)/
-              }, {
-                  s: 'Windows 8',
-                  r: /(Windows 8|Windows NT 6.2)/
-              }, {
-                  s: 'Windows 7',
-                  r: /(Windows 7|Windows NT 6.1)/
-              }, {
-                  s: 'Windows Vista',
-                  r: /Windows NT 6.0/
-              }, {
-                  s: 'Windows Server 2003',
-                  r: /Windows NT 5.2/
-              }, {
-                  s: 'Windows XP',
-                  r: /(Windows NT 5.1|Windows XP)/
-              }, {
-                  s: 'Windows 2000',
-                  r: /(Windows NT 5.0|Windows 2000)/
-              }, {
-                  s: 'Windows ME',
-                  r: /(Win 9x 4.90|Windows ME)/
-              }, {
-                  s: 'Windows 98',
-                  r: /(Windows 98|Win98)/
-              }, {
-                  s: 'Windows 95',
-                  r: /(Windows 95|Win95|Windows_95)/
-              }, {
-                  s: 'Windows NT 4.0',
-                  r: /(Windows NT 4.0|WinNT4.0|WinNT|Windows NT)/
-              }, {
-                  s: 'Windows CE',
-                  r: /Windows CE/
-              }, {
-                  s: 'Windows 3.11',
-                  r: /Win16/
-              }, {
-                  s: 'Android',
-                  r: /Android/
-              }, {
-                  s: 'Open BSD',
-                  r: /OpenBSD/
-              }, {
-                  s: 'Sun OS',
-                  r: /SunOS/
-              }, {
-                  s: 'Linux',
-                  r: /(Linux|X11)/
-              }, {
-                  s: 'iOS',
-                  r: /(iPhone|iPad|iPod)/
-              }, {
-                  s: 'Mac OS X',
-                  r: /Mac OS X/
-              }, {
-                  s: 'Mac OS',
-                  r: /(MacPPC|MacIntel|Mac_PowerPC|Macintosh)/
-              }, {
-                  s: 'QNX',
-                  r: /QNX/
-              }, {
-                  s: 'UNIX',
-                  r: /UNIX/
-              }, {
-                  s: 'BeOS',
-                  r: /BeOS/
-              }, {
-                  s: 'OS/2',
-                  r: /OS\/2/
-              }, {
-                  s: 'Search Bot',
-                  r: /(nuhk|Googlebot|Yammybot|Openbot|Slurp|MSNBot|Ask Jeeves\/Teoma|ia_archiver)/
-              }];
-              for (var id in clientStrings) {
-                  var cs = clientStrings[id];
-                  if (cs.r.test(nAgt)) {
-                      os = cs.s;
-                      break;
-                  }
-              }
-              return os;
-          },
-
-          getPlatformOperatingSystemVersion: function() {
-              var nAgt = navigator.userAgent;
-              var nVer = navigator.appVersion;
-              var os = this.getOperatingSystem();
-              var osVersion = unknown;
-
-              switch (os) {
-                  case 'Mac OS X':
-                      osVersion = /Mac OS X (10[\.\_\d]+)/.exec(nAgt)[1];
-                      break;
-                  case 'Android':
-                      osVersion = /Android ([\.\_\d]+)/.exec(nAgt)[1];
-                      break;
-                  case 'iOS':
-                      osVersion = /OS (\d+)_(\d+)_?(\d+)?/.exec(nVer);
-                      osVersion = osVersion[1] + '.' + osVersion[2] + '.' + (osVersion[3] | 0);
-                      break;
-              }
-              return osVersion;
-          },
-
-          getDeviceName: function() {
-              return navigator.platform;
-          },
-
-          getDeviceModel: function() {
-              return (this.getOperatingSystem() + ' ' + this.getPlatformOperatingSystemVersion());
-          },
-
-          getDeviceBrand: function() {
-              // return this.getOperatingSystem();
-              return navigator.platform;
-          },
-
-          getAppID: function() {
-              return navigator.productSub + '-' + generate.NumberString(8);
-          },
-
-          getAppName: function() {
-              return navigator.appName;
-          },
-
-          getAppVersion: function() {
-              return navigator.appVersion;
-          },
-
-          sendCommand: function(action, method, data) {
-              var route = '';
-              var xhr = new XMLHttpRequest();
-              if (action === 'send') {
-                  switch (method) {
-                      case 'page':
-                          route = API_HOST + API_VERSION + '/send/page';
-                          break;
-                      case 'app':
-                          route = API_HOST + API_VERSION + '/send/app';
-                          break;
-                      case 'screen':
-                          route = API_HOST + API_VERSION + '/send/screen';
-                          break;
-                      case 'events':
-                          route = API_HOST + API_VERSION + '/send/events';
-                          break;
-                      case 'devices':
-                          route = API_HOST + API_VERSION + '/send/devices';
-                          break;
-                      case 'geolocation':
-                          route = API_HOST + API_VERSION + '/send/geolocation';
-                          break;
-                      case 'user':
-                          route = API_HOST + API_VERSION + '/send/user';
-                          break;
-                  }
-
-                  try {
+//===========================================================================================
+//                              FRONTIER'S METHOD'S AND PROCEDURES
+//===========================================================================================
+
+var unknown = '-';
+var API_VERSION = '/analytics/1.0';
+
+var isMobile = {
+    Android: function() {
+        return navigator.userAgent.match(/Android/i);
+    },
+    BlackBerry: function() {
+        return navigator.userAgent.match(/BlackBerry/i);
+    },
+    iOS: function() {
+        return navigator.userAgent.match(/iPhone|iPad|iPod/i);
+    },
+    Opera: function() {
+        return navigator.userAgent.match(/Opera Mini/i);
+    },
+    Windows: function() {
+        return navigator.userAgent.match(/IEMobile/i) || navigator.userAgent.match(/WPDesktop/i);
+    },
+    any: function() {
+        return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows());
+    }
+};
+
+var generate = {
+    String: function(length) {
+        var text = '';
+        var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+        for (var i = 0; i < length; i++) {
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+
+        return text;
+    },
+    NumberString: function(length) {
+        var text = '';
+        var possible = '0123456789';
+
+        for (var i = 0; i < length; i++) {
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+
+        return text;
+    }
+};
+
+function generateUUID() {
+    var d = new Date().getTime();
+    if (window.performance && typeof window.performance.now === 'function') {
+        d += performance.now(); //use high-precision timer if available
+    }
+    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = ((d + Math.random() * 16) % 16 | 0);
+        d = Math.floor(d / 16);
+        return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+    return uuid;
+}
+
+function urlBase64Decode(str) {
+    var output = str.replace(/-/g, '+').replace(/_/g, '/');
+    switch (output.length % 4) {
+        case 0:
+            {
+                break;
+            }
+        case 2:
+            {
+                output += '==';
+                break;
+            }
+        case 3:
+            {
+                output += '=';
+                break;
+            }
+        default:
+            {
+                throw 'Illegal base64url string!';
+            }
+    }
+    return decodeURIComponent(escape(window.atob(output)));
+}
+
+function decodeToken(token) {
+    var parts = token.split('.');
+
+    if (parts.length !== 3) {
+        throw new Error('JWT must have 3 parts');
+    }
+
+    var decoded = urlBase64Decode(parts[1]);
+    if (!decoded) {
+        throw new Error('Cannot decode the token');
+    }
+    return JSON.parse(decoded);
+}
+
+function getTokenExpirationDate(token) {
+    var decoded;
+    decoded = decodeToken(token);
+    if (typeof decoded.exp === "undefined") {
+        return null;
+    }
+
+    var d = new Date(0); // The 0 here is the key, which sets the date to the epoch
+    d.setUTCSeconds(decoded.exp);
+    return d;
+}
+
+function isTokenExpired(token, offsetSeconds) {
+    var d = getTokenExpirationDate(token);
+    offsetSeconds = offsetSeconds || 0;
+    if (d === null) {
+        return false;
+    }
+
+    var isExpired = !(d.valueOf() > (new Date().valueOf() + (offsetSeconds * 1000)));
+    // Token expired?
+    return isExpired;
+}
+
+
+//===========================================================================================
+//                           FRONTIER'S GETTERS AND SETTERS
+//===========================================================================================
+
+function FrontierLib() {
+    return {
+        clearSettings: function() {
+            Cookies.remove('frontierAnalytics_Session');
+            Cookies.remove('frontierAnalytics_accessCode');
+            Cookies.remove('frontierAnalytics_encode');
+            Cookies.remove('frontierAnalytics_trackApp');
+            Cookies.remove('frontierAnalytics_trackDevice');
+            Cookies.remove('frontierAnalytics_trackEvent');
+            Cookies.remove('frontierAnalytics_trackPage');
+            Cookies.remove('frontierAnalytics_trackView');
+            Cookies.remove('frontierAnalytics_trackerName');
+            Cookies.remove('frontierAnalytics_userId');
+
+            if (this.isEnableDebugging()) {
+                console.info('Analytics Reset');
+            }
+            return true;
+        },
+
+        signOut: function() {
+            if (this.isEnableDebugging()) {
+                console.info('Analytics Signout');
+            }
+            return Cookies.remove('frontierAnalytics_Session');
+        },
+
+        setClientID: function(accessCode) {
+            return Cookies.set('frontierAnalytics_accessCode', accessCode);
+        },
+
+        getClientID: function() {
+            return (!_.isEmpty(Cookies.get('frontierAnalytics_accessCode'))) ? Cookies.get('frontierAnalytics_accessCode') : '';
+        },
+
+        setClientTrackerName: function(trackerName) {
+            Cookies.set('frontierAnalytics_trackerName', trackerName);
+        },
+
+        getClientTrackerName: function() {
+            return (!_.isEmpty(Cookies.get('frontierAnalytics_trackerName'))) ? Cookies.get('frontierAnalytics_trackerName') : '';
+        },
+
+        setEncode: function(code) {
+            return Cookies.set('frontierAnalytics_encode', code);
+        },
+
+        getEncode: function() {
+            return (!_.isEmpty(Cookies.get('frontierAnalytics_encode'))) ? Cookies.get('frontierAnalytics_encode') : '';
+        },
+
+        setSessionID: function(session) {
+            return Cookies.set('frontierAnalytics_Session', session);
+        },
+
+        getSessionID: function() {
+            return (!_.isEmpty(Cookies.get('frontierAnalytics_Session'))) ? Cookies.get('frontierAnalytics_Session') : null;
+        },
+
+        setClientUserID: function(userId) {
+            return Cookies.set('frontierAnalytics_userId', userId);
+        },
+
+        getClientUserID: function() {
+            return (!_.isEmpty(Cookies.get('frontierAnalytics_userId'))) ? Cookies.get('frontierAnalytics_userId') : '';
+        },
+
+        isEnableDebugging: function() {
+            return JSON.parse(Cookies.get('frontierAnalytics_Debugging'));
+        },
+
+        IsInitialized: function() {
+            return Cookies.get('frontierAnalytics_Session');
+        },
+
+        IsEnableTrackEvent: function() {
+            return JSON.parse(Cookies.get('frontierAnalytics_trackEvent'));
+        },
+
+        IsEnableTrackPage: function() {
+            return JSON.parse(Cookies.get('frontierAnalytics_trackPage'));
+        },
+
+        IsEnableTrackView: function() {
+            return JSON.parse(Cookies.get('frontierAnalytics_trackView'));
+        },
+
+        IsEnableTrackApp: function() {
+            return JSON.parse(Cookies.get('frontierAnalytics_trackApp'));
+        },
+
+        IsEnableTrackDevice: function() {
+            return JSON.parse(Cookies.get('frontierAnalytics_trackDevice'));
+        },
+
+        checkSessionToken: function(data) {
+            var isSuccess = false;
+
+            /*var API_HOST = 'http://localhost:3000';
+            var API_VERSION = '/analytics/1.0';
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', API_HOST + API_VERSION + '/auth/refreshToken', false);
+
+            xhr.setRequestHeader('accesscode', data.accessCode);
+            xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+
+            data.sessionID = this.getSessionID();
+            xhr.send(JSON.stringify(data));
+
+            if (xhr.status === 200 && xhr.statusText === 'OK') {
+                var resp = JSON.parse(xhr.response);
+
+                if(resp.SessionID){
+                    if (this.isEnableDebugging()) {
+                        console.info('refreshToken NEW SessionID: ',resp.SessionID);
+                    }
+                    this.setSessionID(resp.SessionID);
+                    isSuccess =  true;
+                }
+                if (this.isEnableDebugging()) {
+                    console.info('refreshToken isSuccess: ',isSuccess);
+                }
+                return isSuccess;
+            }*/
+
+            data.sessionID = this.getSessionID();
+            var bool = isTokenExpired(data.sessionID);
+            if (this.isEnableDebugging()) {
+                console.info('data: ', data);
+                console.info('isTokenExpired: ', bool);
+            }
+
+            if (bool) {
+                isSuccess = true;
+            }
+            return isSuccess;
+        },
+
+        getPlatformViewPortSize: function() {
+            var viewPortWidth;
+            var viewPortHeight;
+
+            // the more standards compliant browsers (mozilla/netscape/opera/IE7) use window.innerWidth and window.innerHeight
+            if (typeof window.innerWidth != 'undefined') {
+                viewPortWidth = window.innerWidth;
+                viewPortHeight = window.innerHeight;
+            }
+
+            // IE6 in standards compliant mode (i.e. with a valid doctype as the first line in the document)
+            else if (typeof document.documentElement != 'undefined' && typeof document.documentElement.clientWidth !=
+                'undefined' && document.documentElement.clientWidth !== 0) {
+                viewPortWidth = document.documentElement.clientWidth;
+                viewPortHeight = document.documentElement.clientHeight;
+            }
+
+            // older versions of IE
+            else {
+                viewPortWidth = document.getElementsByTagName('body')[0].clientWidth;
+                viewPortHeight = document.getElementsByTagName('body')[0].clientHeight;
+            }
+            return viewPortWidth + 'x' + viewPortHeight;
+        },
+
+        getScreenResolution: function() {
+            var screenHeight;
+            var screenWidth;
+
+            if (typeof window.screen.availHeight != 'undefined') {
+                screenWidth = window.screen.availWidth;
+                screenHeight = window.screen.availHeight;
+            }
+
+            return screenWidth + 'x' + screenHeight;
+        },
+
+        getScreenColorDepth: function() {
+            if (!_.isUndefined(window.screen.colorDepth)) {
+                return window.screen.colorDepth + '-bits';
+            }
+        },
+
+        getPlatformLanguage: function() {
+            var userLang = navigator.language || navigator.userLanguage;
+            return userLang;
+        },
+
+        getOperatingSystem: function() {
+            var nAgt = navigator.userAgent;
+            var os = unknown;
+
+            var clientStrings = [{
+                s: 'Windows 10',
+                r: /(Windows 10.0|Windows NT 10.0)/
+            }, {
+                s: 'Windows 8.1',
+                r: /(Windows 8.1|Windows NT 6.3)/
+            }, {
+                s: 'Windows 8',
+                r: /(Windows 8|Windows NT 6.2)/
+            }, {
+                s: 'Windows 7',
+                r: /(Windows 7|Windows NT 6.1)/
+            }, {
+                s: 'Windows Vista',
+                r: /Windows NT 6.0/
+            }, {
+                s: 'Windows Server 2003',
+                r: /Windows NT 5.2/
+            }, {
+                s: 'Windows XP',
+                r: /(Windows NT 5.1|Windows XP)/
+            }, {
+                s: 'Windows 2000',
+                r: /(Windows NT 5.0|Windows 2000)/
+            }, {
+                s: 'Windows ME',
+                r: /(Win 9x 4.90|Windows ME)/
+            }, {
+                s: 'Windows 98',
+                r: /(Windows 98|Win98)/
+            }, {
+                s: 'Windows 95',
+                r: /(Windows 95|Win95|Windows_95)/
+            }, {
+                s: 'Windows NT 4.0',
+                r: /(Windows NT 4.0|WinNT4.0|WinNT|Windows NT)/
+            }, {
+                s: 'Windows CE',
+                r: /Windows CE/
+            }, {
+                s: 'Windows 3.11',
+                r: /Win16/
+            }, {
+                s: 'Android',
+                r: /Android/
+            }, {
+                s: 'Open BSD',
+                r: /OpenBSD/
+            }, {
+                s: 'Sun OS',
+                r: /SunOS/
+            }, {
+                s: 'Linux',
+                r: /(Linux|X11)/
+            }, {
+                s: 'iOS',
+                r: /(iPhone|iPad|iPod)/
+            }, {
+                s: 'Mac OS X',
+                r: /Mac OS X/
+            }, {
+                s: 'Mac OS',
+                r: /(MacPPC|MacIntel|Mac_PowerPC|Macintosh)/
+            }, {
+                s: 'QNX',
+                r: /QNX/
+            }, {
+                s: 'UNIX',
+                r: /UNIX/
+            }, {
+                s: 'BeOS',
+                r: /BeOS/
+            }, {
+                s: 'OS/2',
+                r: /OS\/2/
+            }, {
+                s: 'Search Bot',
+                r: /(nuhk|Googlebot|Yammybot|Openbot|Slurp|MSNBot|Ask Jeeves\/Teoma|ia_archiver)/
+            }];
+            for (var id in clientStrings) {
+                var cs = clientStrings[id];
+                if (cs.r.test(nAgt)) {
+                    os = cs.s;
+                    break;
+                }
+            }
+            return os;
+        },
+
+        getPlatformOperatingSystemVersion: function() {
+            var nAgt = navigator.userAgent;
+            var nVer = navigator.appVersion;
+            var os = this.getOperatingSystem();
+            var osVersion = unknown;
+
+            switch (os) {
+                case 'Mac OS X':
+                    osVersion = /Mac OS X (10[\.\_\d]+)/.exec(nAgt)[1];
+                    break;
+                case 'Android':
+                    osVersion = /Android ([\.\_\d]+)/.exec(nAgt)[1];
+                    break;
+                case 'iOS':
+                    osVersion = /OS (\d+)_(\d+)_?(\d+)?/.exec(nVer);
+                    osVersion = osVersion[1] + '.' + osVersion[2] + '.' + (osVersion[3] | 0);
+                    break;
+            }
+            return osVersion;
+        },
+
+        getDeviceName: function() {
+            return navigator.platform;
+        },
+
+        getDeviceModel: function() {
+            return (this.getOperatingSystem() + ' ' + this.getPlatformOperatingSystemVersion());
+        },
+
+        getDeviceBrand: function() {
+            // return this.getOperatingSystem();
+            return navigator.platform;
+        },
+
+        getAppID: function() {
+            return navigator.productSub + '-' + generate.NumberString(8);
+        },
+
+        getAppName: function() {
+            return navigator.appName;
+        },
+
+        getAppVersion: function() {
+            return navigator.appVersion;
+        },
+
+        sendCommand: function(action, method, data) {
+            var route = '';
+            var xhr = new XMLHttpRequest();
+            if (action === 'send') {
+                switch (method) {
+                    case 'page':
+                        route = API_HOST + API_VERSION + '/send/page';
+                        break;
+                    case 'app':
+                        route = API_HOST + API_VERSION + '/send/app';
+                        break;
+                    case 'screen':
+                        route = API_HOST + API_VERSION + '/send/screen';
+                        break;
+                    case 'events':
+                        route = API_HOST + API_VERSION + '/send/events';
+                        break;
+                    case 'devices':
+                        route = API_HOST + API_VERSION + '/send/devices';
+                        break;
+                    case 'geolocation':
+                        route = API_HOST + API_VERSION + '/send/geolocation';
+                        break;
+                    case 'user':
+                        route = API_HOST + API_VERSION + '/send/user';
+                        break;
+                }
+
+                try {
                     xhr.open('POST', route, false);
                     xhr.setRequestHeader('accesscode', data.accessCode);
                     xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
                     xhr.send(JSON.stringify(data));
 
                     if (xhr.status === 200 && xhr.statusText === 'OK') {
+                        var resp = JSON.parse(xhr.response);
+                        if (resp.statusCode == 200) {
+                            var result = resp.response;
+                            if (result.SessionID) {
+                                this.setSessionID(result.SessionID);
+                            }
+                        }
                         return true;
-                    }else{
+                    } else {
                         return false;
                     }
-                  } catch (e) {
-                    console.log('FRONTIER ERR: ',e);
+                } catch (e) {
+                    console.log('FRONTIER ERR: ', e);
                     return false;
-                  }
+                }
 
-              } else if (action === 'ecommerce') {
-                  switch (method) {
-                      case 'addTransaction':
-                          route = API_HOST + API_VERSION + '/ecommerce/transaction';
-                          break;
-                      case 'addItem':
-                          route = API_HOST + API_VERSION + '/ecommerce/item';
-                          break;
-                  }
-                  try {
+            } else if (action === 'ecommerce') {
+                switch (method) {
+                    case 'addTransaction':
+                        route = API_HOST + API_VERSION + '/ecommerce/transaction';
+                        break;
+                    case 'addItem':
+                        route = API_HOST + API_VERSION + '/ecommerce/item';
+                        break;
+                }
+                try {
                     xhr.open('POST', route, false);
                     xhr.setRequestHeader('accesscode', data.accessCode);
                     xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
                     xhr.send(JSON.stringify(data));
                     if (xhr.status === 200 && xhr.statusText === 'OK') {
                         return true;
-                    }else{
+                    } else {
                         return false;
                     }
-                  } catch (e) {
-                    console.log('FRONTIER ERR: ',e);
+                } catch (e) {
+                    console.log('FRONTIER ERR: ', e);
                     return false;
-                  }
-              }
-          }
+                }
+            }
+        }
 
-      }
-  }
+    }
+}
 
   //===========================================================================================
   //                              FRONTIER'S FUNCTIONALITY
@@ -17071,6 +17093,14 @@ var API_HOST = 'http://localhost:4000'; // LOCAL
                   isEnable = false;
               }
               return Cookies.set('frontierAnalytics_trackDevice', isEnable);
+          },
+
+          Reset: function() {
+              return lib.clearSettings();
+          },
+
+          signOut: function(){
+              return lib.signOut();
           },
 
           getViewPortSize: lib.getPlatformViewPortSize(),
@@ -17157,9 +17187,6 @@ var API_HOST = 'http://localhost:4000'; // LOCAL
               }
 
               if (params.userId) {
-                  var tmpUserId = generate.String(9);
-                  requestData.userId = tmpUserId;
-              } else {
                   requestData.userId = params.userId;
                   lib.setClientUserID(params.userId);
               }
@@ -17180,10 +17207,8 @@ var API_HOST = 'http://localhost:4000'; // LOCAL
                           if (typeof params.userId === 'string') {
                               this.setUserID(params.userId);
                           }
-                      } else {
-                          var tmpUserId = generate.String(9);
-                          this.setUserID(tmpUserId);
                       }
+
                       return true;
                   } else {
                       return false;
@@ -17200,10 +17225,7 @@ var API_HOST = 'http://localhost:4000'; // LOCAL
                   if (typeof userId === 'string') {
                       if (lib.IsInitialized()) {
 
-                          if (lib.isEnableDebugging()) {
-                              console.info('frontierAnalytics.setUserID');
-                              console.info('OLD SESSION: ', lib.getSessionID());
-                          }
+                          var sessionID = lib.getSessionID();
 
                           options.trackerName = lib.getClientTrackerName();
                           options.accessCode = lib.getClientID();
@@ -17211,8 +17233,23 @@ var API_HOST = 'http://localhost:4000'; // LOCAL
                           options.appID = lib.getAppID();
                           options.userId = userId;
 
-                          lib.setClientUserID(userId);
-                          return lib.sendCommand('send', 'user', options);
+                          if((sessionID !== 'null')){
+                              options.sessionID = sessionID;
+                          }
+
+                          if (sessionID !== 'null') {
+                              var checkSessionToken = lib.checkSessionToken(options);
+                              if (lib.isEnableDebugging()) {
+                                  console.info('lib.checkSessionToken(options): ' + checkSessionToken);
+                              }
+
+                              if (checkSessionToken) {
+                                  lib.setClientUserID(userId);
+                                  return lib.sendCommand('send', 'user', options);
+                              }
+                          }else{
+                              return lib.sendCommand('send', 'user', options);
+                          }
                       }
                   }
               }
@@ -17237,28 +17274,17 @@ var API_HOST = 'http://localhost:4000'; // LOCAL
               }
 
               if (lib.IsInitialized()) {
-
-                  if (lib.isEnableDebugging()) {
-                      console.info('frontierAnalytics.pageTrack');
-                      console.info('OLD SESSION: ', lib.getSessionID());
-                  }
-
                   options.trackerName = lib.getClientTrackerName();
                   options.accessCode = lib.getClientID();
                   options.userId = lib.getClientUserID();
 
-                  var checkSessionToken = lib.checkSessionToken(options);
+                  if (lib.IsEnableTrackPage()) {
+                      var checkSessionToken = lib.checkSessionToken(options);
+                      if (lib.isEnableDebugging()) {
+                          console.info('lib.checkSessionToken(options): ' + checkSessionToken);
+                      }
 
-                  if (lib.isEnableDebugging()) {
-                      console.info('lib.checkSessionToken(options): ' + checkSessionToken);
-                  }
-
-                  if (lib.IsEnableTrackPage) {
                       if (checkSessionToken) {
-                          if (lib.isEnableDebugging()) {
-                              console.info('SHOW AFTER SESSION IS REFRESH : ' + lib.getSessionID());
-                          }
-
                           options.sessionID = lib.getSessionID();
                           return lib.sendCommand('send', 'page', options);
                       } else {
@@ -17291,26 +17317,17 @@ var API_HOST = 'http://localhost:4000'; // LOCAL
               }
 
               if (lib.IsInitialized()) {
-
-                  if (lib.isEnableDebugging()) {
-                      console.info('frontierAnalytics.eventTrack');
-                      console.info('OLD SESSION: ', lib.getSessionID());
-                  }
-
                   options.trackerName = lib.getClientTrackerName();
                   options.accessCode = lib.getClientID();
                   options.userId = lib.getClientUserID();
 
-                  var checkSessionToken = lib.checkSessionToken(options);
-                  if (lib.isEnableDebugging()) {
-                      console.info('lib.checkSessionToken(options): ' + checkSessionToken);
-                  }
+                  if (lib.IsEnableTrackEvent()) {
+                      var checkSessionToken = lib.checkSessionToken(options);
+                      if (lib.isEnableDebugging()) {
+                          console.info('lib.checkSessionToken(options): ' + checkSessionToken);
+                      }
 
-                  if (lib.IsEnableTrackEvent) {
                       if (checkSessionToken) {
-                          if (lib.isEnableDebugging()) {
-                              console.info('SHOW AFTER SESSION IS REFRESH : ' + lib.getSessionID());
-                          }
                           options.sessionID = lib.getSessionID();
                           return lib.sendCommand('send', 'events', options);
                       } else {
@@ -17347,26 +17364,17 @@ var API_HOST = 'http://localhost:4000'; // LOCAL
               }
 
               if (this.getInitialized()) {
-
-                  if (lib.isEnableDebugging()) {
-                      console.info('frontierAnalytics.appTrack');
-                      console.info('OLD SESSION: ', lib.getSessionID());
-                  }
-
                   options.trackerName = lib.getClientTrackerName();
                   options.accessCode = lib.getClientID();
                   options.userId = lib.getClientUserID();
 
-                  var checkSessionToken = lib.checkSessionToken(options);
-                  if (lib.isEnableDebugging()) {
-                      console.info('checkSessionToken: ' + checkSessionToken);
-                  }
+                  if (lib.IsEnableTrackApp()) {
+                      var checkSessionToken = lib.checkSessionToken(options);
+                      if (lib.isEnableDebugging()) {
+                          console.info('checkSessionToken: ' + checkSessionToken);
+                      }
 
-                  if (lib.IsEnableTrackApp) {
                       if (checkSessionToken) {
-                          if (lib.isEnableDebugging()) {
-                              console.info('SHOW AFTER SESSION IS REFRESH : ', lib.getSessionID());
-                          }
                           options.sessionID = lib.getSessionID();
                           return lib.sendCommand('send', 'app', options);
                       } else {
@@ -17384,27 +17392,17 @@ var API_HOST = 'http://localhost:4000'; // LOCAL
                   }
               }
               if (lib.IsInitialized()) {
-
-                  if (lib.isEnableDebugging()) {
-                      console.info('frontierAnalytics.screenTrack');
-                      console.info('OLD SESSION: ', lib.getSessionID());
-                  }
-
                   options.trackerName = lib.getClientTrackerName();
                   options.accessCode = lib.getClientID();
                   options.userId = lib.getClientUserID();
 
-                  var checkSessionToken = lib.checkSessionToken(options);
-                  if (lib.isEnableDebugging()) {
-                      console.info('checkSessionToken: ', checkSessionToken);
-                  }
+                  if (lib.IsEnableTrackView()) {
+                      var checkSessionToken = lib.checkSessionToken(options);
+                      if (lib.isEnableDebugging()) {
+                          console.info('checkSessionToken: ', checkSessionToken);
+                      }
 
-                  if (lib.IsEnableTrackView) {
                       if (checkSessionToken) {
-                          if (lib.isEnableDebugging()) {
-                              console.info('SHOW AFTER SESSION IS REFRESH : ', lib.getSessionID());
-                          }
-
                           options.sessionID = lib.getSessionID();
                           return lib.sendCommand('send', 'screen', options);
                       } else {
@@ -17458,26 +17456,17 @@ var API_HOST = 'http://localhost:4000'; // LOCAL
               }
 
               if (this.getInitialized()) {
-                  if (lib.isEnableDebugging()) {
-                      console.info('frontierAnalytics.pageTrack');
-                      console.info('OLD SESSION : ', lib.getSessionID());
-                  }
-
                   options.trackerName = lib.getClientTrackerName();
                   options.accessCode = lib.getClientID();
                   options.userId = lib.getClientUserID();
 
-                  var checkSessionToken = lib.checkSessionToken(options);
-                  if (lib.isEnableDebugging()) {
-                      console.info('checkSessionToken: ' + checkSessionToken);
-                  }
+                  if (lib.IsEnableTrackDevice()) {
+                      var checkSessionToken = lib.checkSessionToken(options);
+                      if (lib.isEnableDebugging()) {
+                          console.info('checkSessionToken: ' + checkSessionToken);
+                      }
 
-                  if (lib.IsEnableTrackDevice) {
                       if (checkSessionToken) {
-                          if (lib.isEnableDebugging()) {
-                              console.info('SHOW AFTER SESSION IS REFRESH : ', lib.getSessionID());
-                          }
-
                           options.sessionID = lib.getSessionID();
                           return lib.sendCommand('send', 'devices', options);
                       } else {
