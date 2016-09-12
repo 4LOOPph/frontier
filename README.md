@@ -62,6 +62,7 @@ To track a Device:
 
 To set a UserId:
 * `window.Frontier.setUserId('my-user-id')`
+Note:  'my-user-id' must in a string form or type of string even its a number, decimal and other numeric figure
 
 To enable verbose logging:
 * `window.Frontier.enableAppDebugging(true)` set true to enable debugging mode, default: false
