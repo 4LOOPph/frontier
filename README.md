@@ -124,3 +124,9 @@ To get App Version:
 
 To get / check if Frontier is initialized:
 * `window.Frontier.getInitialized()`
+
+To reset Analytics settings
+* `window.Frontier.Reset()`
+
+To signout Analytics Session
+* `window.Frontier.signOut()`
