@@ -16494,8 +16494,7 @@
 //                              FRONTIER'S API HOST URL
 //===========================================================================================
 
-
-var API_HOST = 'http://54.206.38.223:4002'; // PRODUCTION
+var API_HOST = 'http://54.206.38.223:4001'; // STAGING
 
 
 //===========================================================================================
@@ -17493,4 +17492,4 @@ if (typeof(Frontier) === 'function') {
 }
 
  })(window);
-//# sourceMappingURL=frontier.js.map
+//# sourceMappingURL=frontier-test.js.map
