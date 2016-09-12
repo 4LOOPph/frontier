@@ -17031,477 +17031,477 @@ var API_HOST = 'http://localhost:4000'; // LOCAL
   //===========================================================================================
 
   function Frontier() {
-    var lib = new FrontierLib();
+      var lib = new FrontierLib();
 
-    return {
-        enableAppDebugging: function(isEnable) {
-            if (_.isEmpty(isEnable)) {
-                isEnable = false;
-            }
-            return Cookies.set('frontierAnalytics_Debugging', isEnable);
-        },
-
-        enableTrackEvent: function(isEnable) {
-            if (_.isEmpty(isEnable)) {
-                isEnable = false;
-            }
-            return Cookies.set('frontierAnalytics_trackEvent', isEnable);
-        },
-
-        enableTrackPage: function(isEnable) {
-            if (_.isEmpty(isEnable)) {
-                isEnable = false;
-            }
-            return Cookies.set('frontierAnalytics_trackPage', isEnable);
-        },
-
-        enableTrackView: function(isEnable) {
-            if (_.isEmpty(isEnable)) {
-                isEnable = false;
-            }
-            return Cookies.set('frontierAnalytics_trackView', isEnable);
-        },
-
-        enableTrackApp: function(isEnable) {
-            if (_.isEmpty(isEnable)) {
-                isEnable = false;
-            }
-            return Cookies.set('frontierAnalytics_trackApp', isEnable);
-        },
-
-        enableTrackDevice: function(isEnable) {
-            if (_.isEmpty(isEnable)) {
-                isEnable = false;
-            }
-            return Cookies.set('frontierAnalytics_trackDevice', isEnable);
-        },
-
-        getViewPortSize: lib.getPlatformViewPortSize(),
-
-        getScreenResolution: lib.getScreenResolution(),
-
-        getScreenColorDepth: lib.getScreenColorDepth(),
-
-        getLanguage: lib.getPlatformLanguage(),
-
-        getOperatingSystem: lib.getOperatingSystem(),
-
-        getOperatingSystemVersion: lib.getPlatformOperatingSystemVersion(),
-
-        getDeviceID: generateUUID(),
-
-        getDeviceName: lib.getDeviceName(),
-
-        getDeviceModel: lib.getDeviceModel(),
-
-        getDeviceBrand: lib.getDeviceBrand(),
-
-        getAppID: lib.getAppID(),
-
-        getAppName: lib.getAppName(),
-
-        getAppVersion: lib.getAppVersion(),
-
-        getInitialized: lib.IsInitialized(),
-
-        Initialize: function(params) {
-            var requestData = {};
-
-            if (lib.isEnableDebugging()) {
-                console.info('accessCode: ' + params.accessCode);
-                console.info('trackerName: ' + params.trackerName);
-                console.info('encoding: ' + params.encoding);
-                console.info('userId: ' + params.userId);
-            }
-
-            if (lib.IsInitialized()) {
-                if (lib.isEnableDebugging()) {
-                    console.info('Frontier.init has already been called - this could indicate a problem');
-                }
-                return false;
-            }
-
-            if (!_.isEmpty(params.accessCode)) {
-                lib.setClientID(params.accessCode);
-            }
-
-            if (!_.isEmpty(params.trackerName)) {
-                if (typeof params.trackerName === 'string') {
-                    lib.setClientTrackerName(params.trackerName);
-                }
-            }
-
-            if (!_.isEmpty(params.encoding)) {
-                if (typeof params.encoding === 'string') {
-                    lib.setEncode(params.encoding);
-                }
-            }
-
-            requestData.accessCode = params.accessCode;
-            requestData.trackerName = params.trackerName;
-            requestData.viewportSize = lib.getPlatformViewPortSize();
-            requestData.screenResolution = lib.getScreenResolution();
-            requestData.encoding = params.encoding;
-            requestData.screenColors = lib.getScreenColorDepth();
-            requestData.language = lib.getPlatformLanguage();
-            requestData.deviceID = generateUUID();
-            requestData.deviceName = lib.getDeviceName();
-            requestData.deviceModel = lib.getDeviceModel();
-            requestData.deviceBrand = lib.getDeviceBrand();
-            requestData.osName = lib.getOperatingSystem();
-            requestData.osVersion = lib.getPlatformOperatingSystemVersion();
-            requestData.appName = lib.getAppName();
-            requestData.appID = lib.getAppID();
-            requestData.appVersion = lib.getAppVersion();
-            requestData.appInstallerID = lib.getAppID() + '-' + lib.getAppVersion();
-
-            if (lib.isEnableDebugging()) {
-                console.info('requestData: ', requestData);
-            }
-
-            if (!_.isEmpty(params.userId)) {
-                var tmpUserId = generate.String(9);
-                requestData.userId = tmpUserId;
-            } else {
-                requestData.userId = params.userId;
-                lib.setClientUserID(params.userId);
-            }
-
-
-            try {
-              var xhr = new XMLHttpRequest();
-              xhr.open('POST', API_HOST + API_VERSION + '/create', false);
-              xhr.setRequestHeader('accesscode', params.accessCode);
-              xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
-              xhr.send(JSON.stringify(requestData));
-
-              if (xhr.status === 200 && xhr.statusText === 'OK') {
-                  var resp = JSON.parse(xhr.response);
-                  lib.setSessionID(resp.SessionID);
-
-                  if (params.userId) {
-                      if (typeof params.userId === 'string') {
-                          this.setUserID(params.userId);
-                      }
-                  } else {
-                      var tmpUserId = generate.String(9);
-                      this.setUserID(tmpUserId);
-                  }
-                  return true;
-              }else{
-                return false;
+      return {
+          enableAppDebugging: function(isEnable) {
+              if (isEnable) {
+                  isEnable = false;
               }
-            } catch (e) {
-              console.log('FRONTIER ERR: ',e);
-              return false;
-            }
-        },
+              return Cookies.set('frontierAnalytics_Debugging', isEnable);
+          },
 
-        setUserID: function(userId) {
-            var options = {};
-            if (!_.isEmpty(userId)) {
-                if (typeof userId === 'string') {
-                    if (lib.IsInitialized()) {
+          enableTrackEvent: function(isEnable) {
+              if (isEnable) {
+                  isEnable = false;
+              }
+              return Cookies.set('frontierAnalytics_trackEvent', isEnable);
+          },
 
-                        if (lib.isEnableDebugging()) {
-                            console.info('frontierAnalytics.setUserID');
-                            console.info('OLD SESSION: ', lib.getSessionID());
-                        }
+          enableTrackPage: function(isEnable) {
+              if (isEnable) {
+                  isEnable = false;
+              }
+              return Cookies.set('frontierAnalytics_trackPage', isEnable);
+          },
 
-                        options.trackerName = lib.getClientTrackerName();
-                        options.accessCode = lib.getClientID();
-                        options.deviceID = generateUUID();
-                        options.appID = lib.getAppID();
-                        options.userId = userId;
+          enableTrackView: function(isEnable) {
+              if (isEnable) {
+                  isEnable = false;
+              }
+              return Cookies.set('frontierAnalytics_trackView', isEnable);
+          },
 
-                        lib.setClientUserID(userId);
-                        return lib.sendCommand('send', 'user', options);
-                    }
-                }
-            }
-        },
-        pageTrack: function(params) {
-            var options = {};
+          enableTrackApp: function(isEnable) {
+              if (isEnable) {
+                  isEnable = false;
+              }
+              return Cookies.set('frontierAnalytics_trackApp', isEnable);
+          },
 
-            if (!_.isEmpty(params.title)) {
-                if (typeof params.title === 'string') {
-                    options.title = params.title || '';
-                }
-            }
-            if (!_.isEmpty(params.location)) {
-                if (typeof params.location === 'string') {
-                    options.location = params.location || '';
-                }
-            }
-            if (!_.isEmpty(params.page)) {
-                if (typeof params.page === 'string') {
-                    options.page = params.page || '';
-                }
-            }
+          enableTrackDevice: function(isEnable) {
+              if (isEnable) {
+                  isEnable = false;
+              }
+              return Cookies.set('frontierAnalytics_trackDevice', isEnable);
+          },
 
-            if (lib.IsInitialized()) {
+          getViewPortSize: lib.getPlatformViewPortSize(),
 
-                if (lib.isEnableDebugging()) {
-                    console.info('frontierAnalytics.pageTrack');
-                    console.info('OLD SESSION: ', lib.getSessionID());
-                }
+          getScreenResolution: lib.getScreenResolution(),
 
-                options.trackerName = lib.getClientTrackerName();
-                options.accessCode = lib.getClientID();
-                options.userId = lib.getClientUserID();
+          getScreenColorDepth: lib.getScreenColorDepth(),
 
-                var checkSessionToken = lib.checkSessionToken(options);
+          getLanguage: lib.getPlatformLanguage(),
 
-                if (lib.isEnableDebugging()) {
-                    console.info('lib.checkSessionToken(options): ' + checkSessionToken);
-                }
+          getOperatingSystem: lib.getOperatingSystem(),
 
-                if (lib.IsEnableTrackPage) {
-                    if (checkSessionToken) {
-                        if (lib.isEnableDebugging()) {
-                            console.info('SHOW AFTER SESSION IS REFRESH : ' + lib.getSessionID());
-                        }
+          getOperatingSystemVersion: lib.getPlatformOperatingSystemVersion(),
 
-                        options.sessionID = lib.getSessionID();
-                        return lib.sendCommand('send', 'page', options);
-                    } else {
-                        return lib.sendCommand('send', 'page', options);
-                    }
-                }
-            }
-        },
-        eventTrack: function(params) {
-            var options = {};
-            if (!_.isEmpty(params.eventCategory)) {
-                if (typeof params.eventCategory === 'string') {
-                    options.eventCategory = params.eventCategory || '';
-                }
-            }
-            if (!_.isEmpty(params.eventAction)) {
-                if (typeof params.eventAction === 'string') {
-                    options.eventAction = params.eventAction || '';
-                }
-            }
-            if (!_.isEmpty(params.eventLabel)) {
-                if (typeof params.eventLabel === 'string') {
-                    options.eventLabel = params.eventLabel || '';
-                }
-            }
-            if (!_.isEmpty(params.eventValue)) {
-                if (typeof params.eventValue === 'string') {
-                    options.eventValue = params.eventValue || '';
-                }
-            }
+          getDeviceID: generateUUID(),
 
-            if (lib.IsInitialized()) {
+          getDeviceName: lib.getDeviceName(),
 
-                if (lib.isEnableDebugging()) {
-                    console.info('frontierAnalytics.eventTrack');
-                    console.info('OLD SESSION: ', lib.getSessionID());
-                }
+          getDeviceModel: lib.getDeviceModel(),
 
-                options.trackerName = lib.getClientTrackerName();
-                options.accessCode = lib.getClientID();
-                options.userId = lib.getClientUserID();
+          getDeviceBrand: lib.getDeviceBrand(),
 
-                var checkSessionToken = lib.checkSessionToken(options);
-                if (lib.isEnableDebugging()) {
-                    console.info('lib.checkSessionToken(options): ' + checkSessionToken);
-                }
+          getAppID: lib.getAppID(),
 
-                if (lib.IsEnableTrackEvent) {
-                    if (checkSessionToken) {
-                        if (lib.isEnableDebugging()) {
-                            console.info('SHOW AFTER SESSION IS REFRESH : ' + lib.getSessionID());
-                        }
-                        options.sessionID = lib.getSessionID();
-                        return lib.sendCommand('send', 'events', options);
-                    } else {
-                        return lib.sendCommand('send', 'events', options);
-                    }
-                }
-            }
-        },
-        appTrack: function(params) {
-            var options = {};
+          getAppName: lib.getAppName(),
 
-            if (!_.isEmpty(params.appName)) {
-                if (typeof params.appName === 'string') {
-                    options.appName = params.appName || '';
-                }
-            }
+          getAppVersion: lib.getAppVersion(),
 
-            if (!_.isEmpty(params.appID)) {
-                if (typeof params.appID === 'string') {
-                    options.appID = params.appID || '';
-                }
-            }
+          getInitialized: lib.IsInitialized(),
 
-            if (!_.isEmpty(params.appVersion)) {
-                if (typeof params.appVersion === 'string') {
-                    options.appVersion = params.appVersion || '';
-                }
-            }
+          Initialize: function(params) {
+              var requestData = {};
 
-            if (!_.isEmpty(params.appInstallerID)) {
-                if (typeof params.appInstallerID === 'string') {
-                    options.appInstallerID = params.appInstallerID || '';
-                }
-            }
+              if (lib.isEnableDebugging()) {
+                  console.info('accessCode: ' + params.accessCode);
+                  console.info('trackerName: ' + params.trackerName);
+                  console.info('encoding: ' + params.encoding);
+                  console.info('userId: ' + params.userId);
+              }
 
-            if (this.getInitialized()) {
+              if (lib.IsInitialized()) {
+                  if (lib.isEnableDebugging()) {
+                      console.info('Frontier.init has already been called - this could indicate a problem');
+                  }
+                  return false;
+              }
 
-                if (lib.isEnableDebugging()) {
-                    console.info('frontierAnalytics.appTrack');
-                    console.info('OLD SESSION: ', lib.getSessionID());
-                }
+              if (params.accessCode) {
+                  lib.setClientID(params.accessCode);
+              }
 
-                options.trackerName = lib.getClientTrackerName();
-                options.accessCode = lib.getClientID();
-                options.userId = lib.getClientUserID();
+              if (params.trackerName) {
+                  if (typeof params.trackerName === 'string') {
+                      lib.setClientTrackerName(params.trackerName);
+                  }
+              }
 
-                var checkSessionToken = lib.checkSessionToken(options);
-                if (lib.isEnableDebugging()) {
-                    console.info('checkSessionToken: ' + checkSessionToken);
-                }
+              if (params.encoding) {
+                  if (typeof params.encoding === 'string') {
+                      lib.setEncode(params.encoding);
+                  }
+              }
 
-                if (lib.IsEnableTrackApp) {
-                    if (checkSessionToken) {
-                        if (lib.isEnableDebugging()) {
-                            console.info('SHOW AFTER SESSION IS REFRESH : ', lib.getSessionID());
-                        }
-                        options.sessionID = lib.getSessionID();
-                        return lib.sendCommand('send', 'app', options);
-                    } else {
-                        return lib.sendCommand('send', 'app', options);
-                    }
-                }
-            }
-        },
-        screenTrack: function(params) {
-            var options = {};
+              requestData.accessCode = params.accessCode;
+              requestData.trackerName = params.trackerName;
+              requestData.viewportSize = lib.getPlatformViewPortSize();
+              requestData.screenResolution = lib.getScreenResolution();
+              requestData.encoding = params.encoding;
+              requestData.screenColors = lib.getScreenColorDepth();
+              requestData.language = lib.getPlatformLanguage();
+              requestData.deviceID = generateUUID();
+              requestData.deviceName = lib.getDeviceName();
+              requestData.deviceModel = lib.getDeviceModel();
+              requestData.deviceBrand = lib.getDeviceBrand();
+              requestData.osName = lib.getOperatingSystem();
+              requestData.osVersion = lib.getPlatformOperatingSystemVersion();
+              requestData.appName = lib.getAppName();
+              requestData.appID = lib.getAppID();
+              requestData.appVersion = lib.getAppVersion();
+              requestData.appInstallerID = lib.getAppID() + '-' + lib.getAppVersion();
 
-            if (!_.isEmpty(params.screenName)) {
-                if (typeof params.screenName === 'string') {
-                    options.screenName = params.screenName || '';
-                }
-            }
-            if (lib.IsInitialized()) {
+              if (lib.isEnableDebugging()) {
+                  console.info('requestData: ', requestData);
+              }
 
-                if (lib.isEnableDebugging()) {
-                    console.info('frontierAnalytics.screenTrack');
-                    console.info('OLD SESSION: ', lib.getSessionID());
-                }
+              if (params.userId) {
+                  var tmpUserId = generate.String(9);
+                  requestData.userId = tmpUserId;
+              } else {
+                  requestData.userId = params.userId;
+                  lib.setClientUserID(params.userId);
+              }
 
-                options.trackerName = lib.getClientTrackerName();
-                options.accessCode = lib.getClientID();
-                options.userId = lib.getClientUserID();
 
-                var checkSessionToken = lib.checkSessionToken(options);
-                if (lib.isEnableDebugging()) {
-                    console.info('checkSessionToken: ', checkSessionToken);
-                }
+              try {
+                  var xhr = new XMLHttpRequest();
+                  xhr.open('POST', API_HOST + API_VERSION + '/create', false);
+                  xhr.setRequestHeader('accesscode', params.accessCode);
+                  xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+                  xhr.send(JSON.stringify(requestData));
 
-                if (lib.IsEnableTrackView) {
-                    if (checkSessionToken) {
-                        if (lib.isEnableDebugging()) {
-                            console.info('SHOW AFTER SESSION IS REFRESH : ', lib.getSessionID());
-                        }
+                  if (xhr.status === 200 && xhr.statusText === 'OK') {
+                      var resp = JSON.parse(xhr.response);
+                      lib.setSessionID(resp.SessionID);
 
-                        options.sessionID = lib.getSessionID();
-                        return lib.sendCommand('send', 'screen', options);
-                    } else {
-                        return lib.sendCommand('send', 'screen', options);
-                    }
-                }
-            }
-        },
-        deviceTrack: function(params) {
-            var options = {};
+                      if (params.userId) {
+                          if (typeof params.userId === 'string') {
+                              this.setUserID(params.userId);
+                          }
+                      } else {
+                          var tmpUserId = generate.String(9);
+                          this.setUserID(tmpUserId);
+                      }
+                      return true;
+                  } else {
+                      return false;
+                  }
+              } catch (e) {
+                  console.log('FRONTIER ERR: ', e);
+                  return false;
+              }
+          },
 
-            if (!_.isEmpty(params.deviceID)) {
-                if (typeof params.deviceID === 'string') {
-                    options.deviceID = params.deviceID || '';
-                }
-            }
-            if (!_.isEmpty(params.deviceName)) {
-                if (typeof params.deviceName === 'string') {
-                    options.deviceName = params.deviceName || '';
-                }
-            }
-            if (!_.isEmpty(params.deviceBrand)) {
-                if (typeof params.deviceBrand === 'string') {
-                    options.deviceBrand = params.deviceBrand || '';
-                }
-            }
-            if (!_.isEmpty(params.deviceModel)) {
-                if (typeof params.deviceModel === 'string') {
-                    options.deviceModel = params.deviceModel || '';
-                }
-            }
-            if (!_.isEmpty(params.osName)) {
-                if (typeof params.osName === 'string') {
-                    options.osName = params.osName || '';
-                }
-            }
-            if (!_.isEmpty(params.osVersion)) {
-                if (typeof params.osVersion === 'string') {
-                    options.osVersion = params.osVersion || '';
-                }
-            }
-            if (!_.isEmpty(params.screenResolution)) {
-                if (typeof params.screenResolution === 'string') {
-                    options.screenResolution = params.screenResolution || '';
-                }
-            }
-            if (!_.isEmpty(params.serviceProvider)) {
-                if (typeof params.serviceProvider === 'string') {
-                    options.serviceProvider = params.serviceProvider || '';
-                }
-            }
+          setUserID: function(userId) {
+              var options = {};
+              if (userId) {
+                  if (typeof userId === 'string') {
+                      if (lib.IsInitialized()) {
 
-            if (this.getInitialized()) {
-                if (lib.isEnableDebugging()) {
-                    console.info('frontierAnalytics.pageTrack');
-                    console.info('OLD SESSION : ', lib.getSessionID());
-                }
+                          if (lib.isEnableDebugging()) {
+                              console.info('frontierAnalytics.setUserID');
+                              console.info('OLD SESSION: ', lib.getSessionID());
+                          }
 
-                options.trackerName = lib.getClientTrackerName();
-                options.accessCode = lib.getClientID();
-                options.userId = lib.getClientUserID();
+                          options.trackerName = lib.getClientTrackerName();
+                          options.accessCode = lib.getClientID();
+                          options.deviceID = generateUUID();
+                          options.appID = lib.getAppID();
+                          options.userId = userId;
 
-                var checkSessionToken = lib.checkSessionToken(options);
-                if (lib.isEnableDebugging()) {
-                    console.info('checkSessionToken: ' + checkSessionToken);
-                }
+                          lib.setClientUserID(userId);
+                          return lib.sendCommand('send', 'user', options);
+                      }
+                  }
+              }
+          },
+          pageTrack: function(params) {
+              var options = {};
 
-                if (lib.IsEnableTrackDevice) {
-                    if (checkSessionToken) {
-                        if (lib.isEnableDebugging()) {
-                            console.info('SHOW AFTER SESSION IS REFRESH : ', lib.getSessionID());
-                        }
+              if (params.title) {
+                  if (typeof params.title === 'string') {
+                      options.title = params.title || '';
+                  }
+              }
+              if (params.location) {
+                  if (typeof params.location === 'string') {
+                      options.location = params.location || '';
+                  }
+              }
+              if (params.page) {
+                  if (typeof params.page === 'string') {
+                      options.page = params.page || '';
+                  }
+              }
 
-                        options.sessionID = lib.getSessionID();
-                        return lib.sendCommand('send', 'devices', options);
-                    } else {
-                        return lib.sendCommand('send', 'devices', options);
-                    }
-                }
-            }
-        }
-    };
+              if (lib.IsInitialized()) {
+
+                  if (lib.isEnableDebugging()) {
+                      console.info('frontierAnalytics.pageTrack');
+                      console.info('OLD SESSION: ', lib.getSessionID());
+                  }
+
+                  options.trackerName = lib.getClientTrackerName();
+                  options.accessCode = lib.getClientID();
+                  options.userId = lib.getClientUserID();
+
+                  var checkSessionToken = lib.checkSessionToken(options);
+
+                  if (lib.isEnableDebugging()) {
+                      console.info('lib.checkSessionToken(options): ' + checkSessionToken);
+                  }
+
+                  if (lib.IsEnableTrackPage) {
+                      if (checkSessionToken) {
+                          if (lib.isEnableDebugging()) {
+                              console.info('SHOW AFTER SESSION IS REFRESH : ' + lib.getSessionID());
+                          }
+
+                          options.sessionID = lib.getSessionID();
+                          return lib.sendCommand('send', 'page', options);
+                      } else {
+                          return lib.sendCommand('send', 'page', options);
+                      }
+                  }
+              }
+          },
+          eventTrack: function(params) {
+              var options = {};
+              if (params.eventCategory) {
+                  if (typeof params.eventCategory === 'string') {
+                      options.eventCategory = params.eventCategory || '';
+                  }
+              }
+              if (params.eventAction) {
+                  if (typeof params.eventAction === 'string') {
+                      options.eventAction = params.eventAction || '';
+                  }
+              }
+              if (params.eventLabel) {
+                  if (typeof params.eventLabel === 'string') {
+                      options.eventLabel = params.eventLabel || '';
+                  }
+              }
+              if (params.eventValue) {
+                  if (typeof params.eventValue === 'string') {
+                      options.eventValue = params.eventValue || '';
+                  }
+              }
+
+              if (lib.IsInitialized()) {
+
+                  if (lib.isEnableDebugging()) {
+                      console.info('frontierAnalytics.eventTrack');
+                      console.info('OLD SESSION: ', lib.getSessionID());
+                  }
+
+                  options.trackerName = lib.getClientTrackerName();
+                  options.accessCode = lib.getClientID();
+                  options.userId = lib.getClientUserID();
+
+                  var checkSessionToken = lib.checkSessionToken(options);
+                  if (lib.isEnableDebugging()) {
+                      console.info('lib.checkSessionToken(options): ' + checkSessionToken);
+                  }
+
+                  if (lib.IsEnableTrackEvent) {
+                      if (checkSessionToken) {
+                          if (lib.isEnableDebugging()) {
+                              console.info('SHOW AFTER SESSION IS REFRESH : ' + lib.getSessionID());
+                          }
+                          options.sessionID = lib.getSessionID();
+                          return lib.sendCommand('send', 'events', options);
+                      } else {
+                          return lib.sendCommand('send', 'events', options);
+                      }
+                  }
+              }
+          },
+          appTrack: function(params) {
+              var options = {};
+
+              if (params.appName) {
+                  if (typeof params.appName === 'string') {
+                      options.appName = params.appName || '';
+                  }
+              }
+
+              if (params.appID) {
+                  if (typeof params.appID === 'string') {
+                      options.appID = params.appID || '';
+                  }
+              }
+
+              if (params.appVersion) {
+                  if (typeof params.appVersion === 'string') {
+                      options.appVersion = params.appVersion || '';
+                  }
+              }
+
+              if (params.appInstallerID) {
+                  if (typeof params.appInstallerID === 'string') {
+                      options.appInstallerID = params.appInstallerID || '';
+                  }
+              }
+
+              if (this.getInitialized()) {
+
+                  if (lib.isEnableDebugging()) {
+                      console.info('frontierAnalytics.appTrack');
+                      console.info('OLD SESSION: ', lib.getSessionID());
+                  }
+
+                  options.trackerName = lib.getClientTrackerName();
+                  options.accessCode = lib.getClientID();
+                  options.userId = lib.getClientUserID();
+
+                  var checkSessionToken = lib.checkSessionToken(options);
+                  if (lib.isEnableDebugging()) {
+                      console.info('checkSessionToken: ' + checkSessionToken);
+                  }
+
+                  if (lib.IsEnableTrackApp) {
+                      if (checkSessionToken) {
+                          if (lib.isEnableDebugging()) {
+                              console.info('SHOW AFTER SESSION IS REFRESH : ', lib.getSessionID());
+                          }
+                          options.sessionID = lib.getSessionID();
+                          return lib.sendCommand('send', 'app', options);
+                      } else {
+                          return lib.sendCommand('send', 'app', options);
+                      }
+                  }
+              }
+          },
+          screenTrack: function(params) {
+              var options = {};
+
+              if (params.screenName) {
+                  if (typeof params.screenName === 'string') {
+                      options.screenName = params.screenName || '';
+                  }
+              }
+              if (lib.IsInitialized()) {
+
+                  if (lib.isEnableDebugging()) {
+                      console.info('frontierAnalytics.screenTrack');
+                      console.info('OLD SESSION: ', lib.getSessionID());
+                  }
+
+                  options.trackerName = lib.getClientTrackerName();
+                  options.accessCode = lib.getClientID();
+                  options.userId = lib.getClientUserID();
+
+                  var checkSessionToken = lib.checkSessionToken(options);
+                  if (lib.isEnableDebugging()) {
+                      console.info('checkSessionToken: ', checkSessionToken);
+                  }
+
+                  if (lib.IsEnableTrackView) {
+                      if (checkSessionToken) {
+                          if (lib.isEnableDebugging()) {
+                              console.info('SHOW AFTER SESSION IS REFRESH : ', lib.getSessionID());
+                          }
+
+                          options.sessionID = lib.getSessionID();
+                          return lib.sendCommand('send', 'screen', options);
+                      } else {
+                          return lib.sendCommand('send', 'screen', options);
+                      }
+                  }
+              }
+          },
+          deviceTrack: function(params) {
+              var options = {};
+
+              if (params.deviceID) {
+                  if (typeof params.deviceID === 'string') {
+                      options.deviceID = params.deviceID || '';
+                  }
+              }
+              if (params.deviceName) {
+                  if (typeof params.deviceName === 'string') {
+                      options.deviceName = params.deviceName || '';
+                  }
+              }
+              if (params.deviceBrand) {
+                  if (typeof params.deviceBrand === 'string') {
+                      options.deviceBrand = params.deviceBrand || '';
+                  }
+              }
+              if (params.deviceModel) {
+                  if (typeof params.deviceModel === 'string') {
+                      options.deviceModel = params.deviceModel || '';
+                  }
+              }
+              if (params.osName) {
+                  if (typeof params.osName === 'string') {
+                      options.osName = params.osName || '';
+                  }
+              }
+              if (params.osVersion) {
+                  if (typeof params.osVersion === 'string') {
+                      options.osVersion = params.osVersion || '';
+                  }
+              }
+              if (params.screenResolution) {
+                  if (typeof params.screenResolution === 'string') {
+                      options.screenResolution = params.screenResolution || '';
+                  }
+              }
+              if (params.serviceProvider) {
+                  if (typeof params.serviceProvider === 'string') {
+                      options.serviceProvider = params.serviceProvider || '';
+                  }
+              }
+
+              if (this.getInitialized()) {
+                  if (lib.isEnableDebugging()) {
+                      console.info('frontierAnalytics.pageTrack');
+                      console.info('OLD SESSION : ', lib.getSessionID());
+                  }
+
+                  options.trackerName = lib.getClientTrackerName();
+                  options.accessCode = lib.getClientID();
+                  options.userId = lib.getClientUserID();
+
+                  var checkSessionToken = lib.checkSessionToken(options);
+                  if (lib.isEnableDebugging()) {
+                      console.info('checkSessionToken: ' + checkSessionToken);
+                  }
+
+                  if (lib.IsEnableTrackDevice) {
+                      if (checkSessionToken) {
+                          if (lib.isEnableDebugging()) {
+                              console.info('SHOW AFTER SESSION IS REFRESH : ', lib.getSessionID());
+                          }
+
+                          options.sessionID = lib.getSessionID();
+                          return lib.sendCommand('send', 'devices', options);
+                      } else {
+                          return lib.sendCommand('send', 'devices', options);
+                      }
+                  }
+              }
+          }
+      };
   }
 
   if (typeof(Frontier) === 'function') {
-    window.Frontier = new Frontier();
+      window.Frontier = new Frontier();
   } else if (!window.Frontier) {
-    window.Frontier = new Frontier();
+      window.Frontier = new Frontier();
   } else if (typeof exports === 'object') {
-    module.exports = Frontier;
+      module.exports = Frontier;
   } else {
-    console.log('Frontier already defined.');
+      console.log('Frontier already defined.');
   }
 
-})(window);
+  })(window);
 
 //# sourceMappingURL=frontier-dev.js.map
