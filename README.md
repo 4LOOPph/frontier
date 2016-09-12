@@ -24,12 +24,16 @@ npm i frontier
 
 ```html
 // PRODUCTION
+<script src="https://cdn.rawgit.com/4LOOPph/frontier/v1.0.4/dist/frontier.js"></script>
+or
 <script src="https://cdn.rawgit.com/4LOOPph/frontier/v1.0.4/dist/frontier.min.js"></script>
-
 // STAGING
+<script src="https://cdn.rawgit.com/4LOOPph/frontier/v1.0.4/dist/frontier-test.js"></script>
+or
 <script src="https://cdn.rawgit.com/4LOOPph/frontier/v1.0.4/dist/frontier-test.min.js"></script>
-
 // LOCAL
+<script src="https://cdn.rawgit.com/4LOOPph/frontier/v1.0.4/dist/frontier-dev.js"></script>
+or
 <script src="https://cdn.rawgit.com/4LOOPph/frontier/v1.0.4/dist/frontier-dev.min.js"></script>
 ```
 Note:  frontier for  **LOCAL**  is not usable for production.
@@ -37,14 +41,14 @@ Note:  frontier for  **LOCAL**  is not usable for production.
 #JavaScript Usage
 In your 'deviceready' handler, set up your Frontier tracker:
 
-* `window.Frontier.Initialize({ accessCode: 'XXXXXXXXXXXXXXX',trackerName: 'tracker-name',encoding: 'utf-8'})`
-where XXXXXXXXXXXXXXX is your Symphony Access Code base on your subscription
+* `window.Frontier.Initialize({ accessCode: 'XXXXXXXXXXXXXXX',trackerName: 'tracker-name',encoding: 'utf-8'})` 
+where XXXXXXXXXXXXXXX is your Symphony Access Code base on your subscription 
 
 To track a Screen (View):
 * `window.Frontier.screenTrack({screenName:'Screen Title'})`
 
 To track an Event:
-* `window.Frontier.eventTrack({eventCategory:'Category', eventAction:'Action', eventLabel:'Label', eventValue:'Value'})`
+* `window.Frontier.eventTrack({eventCategory:'Category', eventAction:'Action', eventLabel:'Label', eventValue:'Value'})` 
 Label and Value are optional
 
 To track a Page:
@@ -54,7 +58,7 @@ To track an App:
 * `window.Frontier.appTrack({appName: 'App Name', appID: 'XXXX-YYY-ZZZ',appVersion:'1.0.0',appInstallerID: 'XXX-YY-1.0.0'})`
 
 To track a Device:
-* `window.Frontier.deviceTrack({deviceID:'deviceID',deviceName:'deviceName', deviceBrand:'deviceBrand',deviceModel:'deviceModel',osName:'osName',osVersion:'osVersion',screenResolution:'screenResolution',serviceProvider:'serviceProvider'})`
+* `window.Frontier.deviceTrack({deviceID:'deviceID',deviceName:'deviceName', deviceBrand:'deviceBrand',deviceModel:'deviceModel',osName:'osName',osVersion:'osVersion',screenResolution:'screenResolution',serviceProvider:'serviceProvider'})` 
 
 To set a UserId:
 * `window.Frontier.setUserId('my-user-id')`
