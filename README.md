@@ -24,17 +24,17 @@ npm i frontier
 
 ```html
 // PRODUCTION
-<script src="https://cdn.rawgit.com/4LOOPph/frontier/v1.0.4/dist/frontier.js"></script>
+<script src="https://cdn.rawgit.com/4LOOPph/frontier/v1.0.4b/dist/frontier.js"></script>
 or
-<script src="https://cdn.rawgit.com/4LOOPph/frontier/v1.0.4/dist/frontier.min.js"></script>
+<script src="https://cdn.rawgit.com/4LOOPph/frontier/v1.0.4b/dist/frontier.min.js"></script>
 // STAGING
-<script src="https://cdn.rawgit.com/4LOOPph/frontier/v1.0.4/dist/frontier-test.js"></script>
+<script src="https://cdn.rawgit.com/4LOOPph/frontier/v1.0.4b/dist/frontier-test.js"></script>
 or
-<script src="https://cdn.rawgit.com/4LOOPph/frontier/v1.0.4/dist/frontier-test.min.js"></script>
+<script src="https://cdn.rawgit.com/4LOOPph/frontier/v1.0.4b/dist/frontier-test.min.js"></script>
 // LOCAL
-<script src="https://cdn.rawgit.com/4LOOPph/frontier/v1.0.4/dist/frontier-dev.js"></script>
+<script src="https://cdn.rawgit.com/4LOOPph/frontier/v1.0.4b/dist/frontier-dev.js"></script>
 or
-<script src="https://cdn.rawgit.com/4LOOPph/frontier/v1.0.4/dist/frontier-dev.min.js"></script>
+<script src="https://cdn.rawgit.com/4LOOPph/frontier/v1.0.4b/dist/frontier-dev.min.js"></script>
 ```
 Note:  frontier for  **LOCAL**  is not usable for production.
 
