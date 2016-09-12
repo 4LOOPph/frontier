@@ -16974,9 +16974,6 @@ var API_HOST = 'http://54.206.38.223:4002'; // PRODUCTION
                           route = API_HOST + API_VERSION + '/send/geolocation';
                           break;
                       case 'user':
-                          data = {
-                              userId: data
-                          };
                           route = API_HOST + API_VERSION + '/send/user';
                           break;
                   }
