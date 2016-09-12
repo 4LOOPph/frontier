@@ -17035,42 +17035,42 @@ var API_HOST = 'http://localhost:4000'; // LOCAL
 
       return {
           enableAppDebugging: function(isEnable) {
-              if (isEnable) {
+              if (!isEnable) {
                   isEnable = false;
               }
               return Cookies.set('frontierAnalytics_Debugging', isEnable);
           },
 
           enableTrackEvent: function(isEnable) {
-              if (isEnable) {
+              if (!isEnable) {
                   isEnable = false;
               }
               return Cookies.set('frontierAnalytics_trackEvent', isEnable);
           },
 
           enableTrackPage: function(isEnable) {
-              if (isEnable) {
+              if (!isEnable) {
                   isEnable = false;
               }
               return Cookies.set('frontierAnalytics_trackPage', isEnable);
           },
 
           enableTrackView: function(isEnable) {
-              if (isEnable) {
+              if (!isEnable) {
                   isEnable = false;
               }
               return Cookies.set('frontierAnalytics_trackView', isEnable);
           },
 
           enableTrackApp: function(isEnable) {
-              if (isEnable) {
+              if (!isEnable) {
                   isEnable = false;
               }
               return Cookies.set('frontierAnalytics_trackApp', isEnable);
           },
 
           enableTrackDevice: function(isEnable) {
-              if (isEnable) {
+              if (!isEnable) {
                   isEnable = false;
               }
               return Cookies.set('frontierAnalytics_trackDevice', isEnable);
