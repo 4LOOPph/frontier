@@ -9,7 +9,7 @@
 Frontier SDK to connect to Frontier's Analytics API
 
 
-#Installing
+## Installing
 
 You have several options:
 ```sh
@@ -23,110 +23,257 @@ npm i frontier
 ```
 
 ```html
-// PRODUCTION
-<script src="https://cdn.rawgit.com/4LOOPph/frontier/v1.0.5/dist/frontier.js"></script>
+<script src="https://cdn.rawgit.com/4LOOPph/frontier/v1.0.6/dist/frontier.js"></script>
 or
-<script src="https://cdn.rawgit.com/4LOOPph/frontier/v1.0.5/dist/frontier.min.js"></script>
-// STAGING
-<script src="https://cdn.rawgit.com/4LOOPph/frontier/v1.0.5/dist/frontier-test.js"></script>
-or
-<script src="https://cdn.rawgit.com/4LOOPph/frontier/v1.0.5/dist/frontier-test.min.js"></script>
-// LOCAL
-<script src="https://cdn.rawgit.com/4LOOPph/frontier/v1.0.5/dist/frontier-dev.js"></script>
-or
-<script src="https://cdn.rawgit.com/4LOOPph/frontier/v1.0.5/dist/frontier-dev.min.js"></script>
+<script src="https://cdn.rawgit.com/4LOOPph/frontier/v1.0.6/dist/frontier.min.js"></script>
 ```
-Note:  frontier for  **LOCAL**  is not usable for production.
+**Note**:  frontier for  **LOCAL**  is not safe and usable for production nor staging test.
 
-#JavaScript Usage
+#### JavaScript Usage
 In your 'deviceready' handler, set up your Frontier tracker:
+```js
+	/*
+		PARAMETERS
+		@accessCode - string
+		@trackerName - string
+		@encoding - string
+	*/
+	
+	window.Frontier.Initialize({
+		 accessCode: 'XXXXXXXXXXXXXXX',
+		 trackerName: 'tracker-name',
+		 encoding: 'utf-8'
+	});
+```
+where XXXXXXXXXXXXXXX is your ** Symphony Access Code** base on your subscription 
 
-* `window.Frontier.Initialize({ accessCode: 'XXXXXXXXXXXXXXX',trackerName: 'tracker-name',encoding: 'utf-8'})` 
-where XXXXXXXXXXXXXXX is your Symphony Access Code base on your subscription 
+#### To enable verbose logging:
+```js
+	window.Frontier.enableAppDebugging(true);
+```
+**Note**: set true to enable debugging mode, default: false
+If set to a truthy value then debugging mode is enabled with Frontier.
+All trackers with `isEnableDebugging: true` will enable for debugging mode.
 
-To track a Screen (View):
-* `window.Frontier.screenTrack({screenName:'Screen Title'})`
+#### To enable Event Tracking:
+```js
+	window.Frontier.enableTrackEvent(true);
+```
+**Note**: set true to enable Event Tracking, default: false
+If set to a truthy value then the event tracking is enable with Frontier Analytics.
+All trackers with `IsEnableTrackEvent: true` will enable for Event Tracking with Frontier.
 
-To track an Event:
-* `window.Frontier.eventTrack({eventCategory:'Category', eventAction:'Action', eventLabel:'Label', eventValue:'Value'})` 
-Label and Value are optional
+#### To enable Page Tracking:
+```js
+	window.Frontier.enableTrackPage(true)
+``` 
+**Note**: set true to enable Page Tracking, default: false
+If set to a truthy value then the page tracking is enable with Frontier Analytics.
+All trackers with `IsEnableTrackPage: true` will enable for Page Tracking with Frontier.
 
-To track a Page:
-* `window.Frontier.pageTrack({title:'Page Title', location:'Page URL',page:'Page')`
+#### To enable View / Screen Tracking:
+```js
+window.Frontier.enableTrackView(true)
+``` 
+**Note**: set true to enable View / Screen Tracking, default: false
+If set to a truthy value then the event tracking is enable with Frontier Analytics.
+All trackers with `IsEnableTrackView: true` will enable for View/Screen Tracking with Frontier.
 
-To track an App:
-* `window.Frontier.appTrack({appName: 'App Name', appID: 'XXXX-YYY-ZZZ',appVersion:'1.0.0',appInstallerID: 'XXX-YY-1.0.0'})`
+#### To enable App Tracking:
+```js
+	window.Frontier.enableTrackApp(true)
+``` 
+**Note**: set true to enable App Tracking, default: false
+If set to a truthy value then the event tracking is enable with Frontier Analytics.
+All trackers with `IsEnableTrackApp: true` will enable for App Tracking with Frontier.
 
-To track a Device:
-* `window.Frontier.deviceTrack({deviceID:'deviceID',deviceName:'deviceName', deviceBrand:'deviceBrand',deviceModel:'deviceModel',osName:'osName',osVersion:'osVersion',screenResolution:'screenResolution',serviceProvider:'serviceProvider'})` 
+#### To enable Device Tracking:
+```js 
+	window.Frontier.enableTrackDevice(true)
+```
+**Note**: set true to enable Device Tracking, default: false
+If set to a truthy value then the event tracking is enable with Frontier Analytics.
+All trackers with `IsEnableTrackDevice: true` will enable for Device Tracking with Frontier.
 
-To set a UserId:
-* `window.Frontier.setUserId('my-user-id')`
+#### To track a Screen (View):
+```js
+	/*
+		PARAMETERS
+		@screenName - string
+	*/
+	
+	window.Frontier.screenTrack({
+		screenName:'Screen Title'
+	});
+```
 
-Note:  'my-user-id' must in a string form or type of string even its a number, decimal and other numeric figure
+#### To track an Event:
+```js
+	/*
+		PARAMETERS
+		@category - string
+		@action - string
+		@label - string
+		@value - integer
+	*/
+	window.Frontier.eventTrack({
+		eventCategory:'Category', 
+		eventAction:'Action', 
+		eventLabel:'Label', 
+		eventValue:'Value'
+	});
+```
+**Note**: eventLabel and eventValue are optional
 
-To enable verbose logging:
-* `window.Frontier.enableAppDebugging(true)` set true to enable debugging mode, default: false
+#### To track a Page:
+```js
+	/*
+		PARAMETERS
+		@title - string
+		@location - string
+		@page - string
+	*/
+		
+	window.Frontier.pageTrack({
+		title:'Page Title', 
+		location:'Page URL',
+		page:'Page'
+	});
+```
 
-To enable Event Tracking:
-* `window.Frontier.enableTrackEvent(true)` set true to enable Event Tracking, default: false
+#### To track an App:
+```js
+	/*
+		PARAMETERS
+		@appName - string
+		@appID - string
+		@appVersion - string
+		@appInstallerID -  stirng
+	*/
+	
+	window.Frontier.appTrack({
+		appName: 'App Name', 
+		appID: 'XXXX-YYY-ZZZ',
+		appVersion:'1.0.0',
+		appInstallerID: 'XXX-YY-1.0.0'
+	});
+```
 
-To enable Page Tracking:
-* `window.Frontier.enableTrackPage(true)` set true to enable Page Tracking, default: false
+#### To track a Device:
+```js
+	/*
+		PARAMETERS
+		@deviceID - string
+		@deviceName - string
+		@deviceBrand - string
+		@deviceModel - string
+		@osName - string
+		@osVersion - string
+		@screenResolution - string
+		@serviceProvider - string
+	*/
+	
+	window.Frontier.deviceTrack({
+		deviceID:'deviceID',
+		deviceName:'deviceName',
+		deviceBrand:'deviceBrand',
+		deviceModel:'deviceModel',
+		osName:'osName',
+		osVersion:'osVersion',
+		screenResolution:'screenResolution',
+		serviceProvider:'serviceProvider'
+	});
+``` 
 
-To enable View / Screen Tracking:
-* `window.Frontier.enableTrackView(true)` set true to enable View / Screen Tracking, default: false
+#### To set a UserId:
+```js
+	/*
+		PARAMETERS
+		@userId - string
+	*/
+	window.Frontier.setUserId('userId')
+```
+**Note**:  'userId' must in a string form or type of string even its a number, decimal and other numeric figure
 
-To enable App Tracking:
-* `window.Frontier.enableTrackApp(true)` set true to enable App Tracking, default: false
+#### To get View Port Size:
+```js
+	window.Frontier.getViewPortSize()
+```
 
-To enable Device Tracking:
-* `window.Frontier.enableTrackDevice(true)` set true to enable Device Tracking, default: false
+#### To get Screen Resolution:
+```js
+	window.Frontier.getScreenResolution()
+```
 
-To get View Port Size:
-* `window.Frontier.getViewPortSize()`
+#### To get Screen Color Depth:
+```js
+	window.Frontier.getScreenColorDepth()
+```
 
-To get Screen Resolution:
-* `window.Frontier.getScreenResolution()`
+#### To get Language:
+```js
+	window.Frontier.getLanguage()
+```
 
-To get Screen Color Depth:
-* `window.Frontier.getScreenColorDepth()`
+#### To get Operating System Info:
+```js
+	window.Frontier.getOperatingSystem()
+```
 
-To get Language:
-* `window.Frontier.getLanguage()`
+#### To get Operating System Version:
+```js
+	window.Frontier.getOperatingSystemVersion()
+```
 
-To get Operating System Info:
-* `window.Frontier.getOperatingSystem()`
+#### To get Device Unique ID:
+```js
+	window.Frontier.getDeviceID()
+```
 
-To get Operating System Version:
-* `window.Frontier.getOperatingSystemVersion()`
+#### To get Device Name:
+```js
+	window.Frontier.getDeviceName()
+```
 
-To get Device Unique ID:
-* `window.Frontier.getDeviceID()`
+#### To get Device Model:
+```js
+	window.Frontier.getDeviceModel()
+```
 
-To get Device Name:
-* `window.Frontier.getDeviceName()`
+#### To get Device Brand:
+```js
+	window.Frontier.getDeviceBrand()
+```
 
-To get Device Model:
-* `window.Frontier.getDeviceModel()`
+#### To get App ID:
+```js
+window.Frontier.getAppID()
+```
 
-To get Device Brand:
-* `window.Frontier.getDeviceBrand()`
+#### To get App Name:
+```js
+	window.Frontier.getAppName()
+```
 
-To get App ID:
-* `window.Frontier.getAppID()`
+#### To get App Version:
+```js
+	window.Frontier.getAppVersion()
+```
 
-To get App Name:
-* `window.Frontier.getAppName()`
+#### To get / check if Frontier is initialized:
+```js
+	window.Frontier.getInitialized()
+```
 
-To get App Version:
-* `window.Frontier.getAppVersion()`
+#### To reset Analytics settings
+```js
+	window.Frontier.Reset()
+```
+**Note**: Use Analytics Reset when you want to clear Analytics cache. This means everything on analytics initialization is cleared and a browser reload/refresh is required
 
-To get / check if Frontier is initialized:
-* `window.Frontier.getInitialized()`
+#### To signout Analytics Session
+```js
+window.Frontier.signOut()
+```
+**Note:** Use Analytics Signout when you want to signout Analytics active session. This means everything on analytics current session will be stop and resetted.  You can use this feature on your application authentication.
 
-To reset Analytics settings
-* `window.Frontier.Reset()`
-
-To signout Analytics Session
-* `window.Frontier.signOut()`
