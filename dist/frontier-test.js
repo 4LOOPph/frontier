@@ -16993,7 +16993,7 @@ function FrontierLib() {
                 }
 
                 try {
-                    xhr.open('POST', route, false);
+                    xhr.open('POST', route, true);
                     xhr.setRequestHeader('accesscode', data.accessCode);
                     xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
                     xhr.send(JSON.stringify(data));
