@@ -16710,10 +16710,12 @@ function FrontierLib() {
         },
 
         IsInitialized: function() {
-            var bool = false;
-            var cookie = JSON.parse(Cookies.get('frontierAnalytics_Session'));
-            if(cookie){
-                bool = true;
+            var bool = true;
+            var cookie = Cookies.get('frontierAnalytics_Session');
+            if(cookie && cookie == 'null'){
+                bool = false;
+            }else if(cookie && cookie == 'undefined'){
+                bool = false;
             }
             return bool;
         },
