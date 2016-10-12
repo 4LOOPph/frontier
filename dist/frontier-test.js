@@ -16716,6 +16716,10 @@ function FrontierLib() {
                 bool = false;
             }else if(cookie && cookie == 'undefined'){
                 bool = false;
+            }else if(cookie == undefined){
+              bool = false;
+            }else if(cookie == null){
+              bool = false;
             }
             return bool;
         },
