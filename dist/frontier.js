@@ -16765,10 +16765,17 @@ function FrontierLib() {
                 return isSuccess;
             }*/
 
-            data.sessionID = this.getSessionID();
-            var bool = isTokenExpired(data.sessionID);
             if (this.isEnableDebugging()) {
                 console.info('data: ', data);
+            }
+
+            if(!data.sessionID){
+                data.sessionID = this.getSessionID();
+            }
+
+            var bool = isTokenExpired(data.sessionID);
+
+            if (this.isEnableDebugging()) {
                 console.info('isTokenExpired: ', bool);
             }
 

@@ -23,9 +23,9 @@ npm i frontier
 ```
 
 ```html
-<script src="https://cdn.rawgit.com/4LOOPph/frontier/v1.0.7/dist/frontier.js"></script>
+<script src="https://cdn.rawgit.com/4LOOPph/frontier/v1.0.8/dist/frontier.js"></script>
 or
-<script src="https://cdn.rawgit.com/4LOOPph/frontier/v1.0.7/dist/frontier.min.js"></script>
+<script src="https://cdn.rawgit.com/4LOOPph/frontier/v1.0.8/dist/frontier.min.js"></script>
 ```
 **Note**:  frontier for  **LOCAL**  is not safe and usable for production nor staging test.
 
@@ -38,14 +38,14 @@ In your 'deviceready' handler, set up your Frontier tracker:
 		@trackerName - string
 		@encoding - string
 	*/
-	
+
 	window.Frontier.Initialize({
 		 accessCode: 'XXXXXXXXXXXXXXX',
 		 trackerName: 'tracker-name',
 		 encoding: 'utf-8'
 	});
 ```
-where XXXXXXXXXXXXXXX is your ** Symphony Access Code** base on your subscription 
+where XXXXXXXXXXXXXXX is your ** Symphony Access Code** base on your subscription
 
 #### To enable verbose logging:
 ```js
@@ -66,7 +66,7 @@ All trackers with `IsEnableTrackEvent: true` will enable for Event Tracking with
 #### To enable Page Tracking:
 ```js
 	window.Frontier.enableTrackPage(true)
-``` 
+```
 **Note**: set true to enable Page Tracking, default: false
 If set to a truthy value then the page tracking is enable with Frontier Analytics.
 All trackers with `IsEnableTrackPage: true` will enable for Page Tracking with Frontier.
@@ -74,7 +74,7 @@ All trackers with `IsEnableTrackPage: true` will enable for Page Tracking with F
 #### To enable View / Screen Tracking:
 ```js
 window.Frontier.enableTrackView(true)
-``` 
+```
 **Note**: set true to enable View / Screen Tracking, default: false
 If set to a truthy value then the event tracking is enable with Frontier Analytics.
 All trackers with `IsEnableTrackView: true` will enable for View/Screen Tracking with Frontier.
@@ -82,13 +82,13 @@ All trackers with `IsEnableTrackView: true` will enable for View/Screen Tracking
 #### To enable App Tracking:
 ```js
 	window.Frontier.enableTrackApp(true)
-``` 
+```
 **Note**: set true to enable App Tracking, default: false
 If set to a truthy value then the event tracking is enable with Frontier Analytics.
 All trackers with `IsEnableTrackApp: true` will enable for App Tracking with Frontier.
 
 #### To enable Device Tracking:
-```js 
+```js
 	window.Frontier.enableTrackDevice(true)
 ```
 **Note**: set true to enable Device Tracking, default: false
@@ -101,7 +101,7 @@ All trackers with `IsEnableTrackDevice: true` will enable for Device Tracking wi
 		PARAMETERS
 		@screenName - string
 	*/
-	
+
 	window.Frontier.screenTrack({
 		screenName:'Screen Title'
 	});
@@ -117,9 +117,9 @@ All trackers with `IsEnableTrackDevice: true` will enable for Device Tracking wi
 		@value - integer
 	*/
 	window.Frontier.eventTrack({
-		eventCategory:'Category', 
-		eventAction:'Action', 
-		eventLabel:'Label', 
+		eventCategory:'Category',
+		eventAction:'Action',
+		eventLabel:'Label',
 		eventValue:'Value'
 	});
 ```
@@ -133,9 +133,9 @@ All trackers with `IsEnableTrackDevice: true` will enable for Device Tracking wi
 		@location - string
 		@page - string
 	*/
-		
+
 	window.Frontier.pageTrack({
-		title:'Page Title', 
+		title:'Page Title',
 		location:'Page URL',
 		page:'Page'
 	});
@@ -150,9 +150,9 @@ All trackers with `IsEnableTrackDevice: true` will enable for Device Tracking wi
 		@appVersion - string
 		@appInstallerID -  stirng
 	*/
-	
+
 	window.Frontier.appTrack({
-		appName: 'App Name', 
+		appName: 'App Name',
 		appID: 'XXXX-YYY-ZZZ',
 		appVersion:'1.0.0',
 		appInstallerID: 'XXX-YY-1.0.0'
@@ -172,7 +172,7 @@ All trackers with `IsEnableTrackDevice: true` will enable for Device Tracking wi
 		@screenResolution - string
 		@serviceProvider - string
 	*/
-	
+
 	window.Frontier.deviceTrack({
 		deviceID:'deviceID',
 		deviceName:'deviceName',
@@ -183,7 +183,7 @@ All trackers with `IsEnableTrackDevice: true` will enable for Device Tracking wi
 		screenResolution:'screenResolution',
 		serviceProvider:'serviceProvider'
 	});
-``` 
+```
 
 #### To set a UserId:
 ```js
@@ -276,4 +276,3 @@ window.Frontier.getAppID()
 window.Frontier.signOut()
 ```
 **Note:** Use Analytics Signout when you want to signout Analytics active session. This means everything on analytics current session will be stop and resetted.  You can use this feature on your application authentication.
-
