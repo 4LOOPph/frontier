@@ -16711,7 +16711,12 @@ function FrontierLib() {
         },
 
         IsInitialized: function() {
-            return Cookies.get('frontierAnalytics_Session');
+            var bool = false;
+            var cookie = JSON.parse(Cookies.get('frontierAnalytics_Session'));
+            if(cookie){
+                bool = true;
+            }
+            return bool;
         },
 
         IsEnableTrackEvent: function() {
@@ -17106,7 +17111,7 @@ function FrontierLib() {
               return lib.clearSettings();
           },
 
-          signOut: function(){
+          signOut: function() {
               return lib.signOut();
           },
 
@@ -17148,7 +17153,8 @@ function FrontierLib() {
                   console.info('userId: ' + params.userId);
               }
 
-              if (lib.IsInitialized()) {
+              var IsInitialized = lib.IsInitialized();
+              if (IsInitialized) {
                   if (lib.isEnableDebugging()) {
                       console.info('Frontier.init has already been called - this could indicate a problem');
                   }
@@ -17230,7 +17236,8 @@ function FrontierLib() {
               var options = {};
               if (userId) {
                   if (typeof userId === 'string') {
-                      if (lib.IsInitialized()) {
+                      var IsInitialized = lib.IsInitialized();
+                      if (IsInitialized) {
 
                           var sessionID = lib.getSessionID();
 
@@ -17240,7 +17247,7 @@ function FrontierLib() {
                           options.appID = lib.getAppID();
                           options.userId = userId;
 
-                          if((sessionID !== 'null')){
+                          if ((sessionID !== 'null')) {
                               options.sessionID = sessionID;
                           }
 
@@ -17254,7 +17261,7 @@ function FrontierLib() {
                                   lib.setClientUserID(userId);
                                   return lib.sendCommand('send', 'user', options);
                               }
-                          }else{
+                          } else {
                               return lib.sendCommand('send', 'user', options);
                           }
                       }
@@ -17280,7 +17287,8 @@ function FrontierLib() {
                   }
               }
 
-              if (lib.IsInitialized()) {
+              var IsInitialized = lib.IsInitialized();
+              if (IsInitialized) {
                   options.trackerName = lib.getClientTrackerName();
                   options.accessCode = lib.getClientID();
                   options.userId = lib.getClientUserID();
@@ -17323,7 +17331,8 @@ function FrontierLib() {
                   }
               }
 
-              if (lib.IsInitialized()) {
+              var IsInitialized = lib.IsInitialized();
+              if (IsInitialized) {
                   options.trackerName = lib.getClientTrackerName();
                   options.accessCode = lib.getClientID();
                   options.userId = lib.getClientUserID();
@@ -17370,7 +17379,8 @@ function FrontierLib() {
                   }
               }
 
-              if (this.getInitialized()) {
+              var IsInitialized = lib.IsInitialized();
+              if (IsInitialized) {
                   options.trackerName = lib.getClientTrackerName();
                   options.accessCode = lib.getClientID();
                   options.userId = lib.getClientUserID();
@@ -17398,7 +17408,8 @@ function FrontierLib() {
                       options.screenName = params.screenName || '';
                   }
               }
-              if (lib.IsInitialized()) {
+              var IsInitialized = lib.IsInitialized();
+              if (IsInitialized) {
                   options.trackerName = lib.getClientTrackerName();
                   options.accessCode = lib.getClientID();
                   options.userId = lib.getClientUserID();
@@ -17462,7 +17473,7 @@ function FrontierLib() {
                   }
               }
 
-              if (this.getInitialized()) {
+              if (this.IsInitialized()) {
                   options.trackerName = lib.getClientTrackerName();
                   options.accessCode = lib.getClientID();
                   options.userId = lib.getClientUserID();
