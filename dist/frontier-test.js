@@ -17158,28 +17158,34 @@ function FrontierLib() {
                   console.info('userId: ' + params.userId);
               }
 
-              var IsInitialized = lib.IsInitialized();
-              if (IsInitialized) {
-                  if (lib.isEnableDebugging()) {
-                      console.info('Frontier.init has already been called - this could indicate a problem');
-                  }
-                  return false;
-              }
-
               if (params.accessCode) {
                   lib.setClientID(params.accessCode);
+              }else{
+                  console.error('Frontier: Invalid or Missing Access Code parameter');
+                  return false;
               }
 
               if (params.trackerName) {
                   if (typeof params.trackerName === 'string') {
                       lib.setClientTrackerName(params.trackerName);
                   }
+              }else{
+                console.error('Frontier: Invalid or Missing Tracker Name parameter');
+                return false;
               }
 
               if (params.encoding) {
                   if (typeof params.encoding === 'string') {
                       lib.setEncode(params.encoding);
                   }
+              }
+
+              var IsInitialized = lib.IsInitialized();
+              if (IsInitialized) {
+                  if (lib.isEnableDebugging()) {
+                      console.info('Frontier.init has already been called - this could indicate a problem');
+                  }
+                  return false;
               }
 
               requestData.accessCode = params.accessCode;
@@ -17262,7 +17268,7 @@ function FrontierLib() {
                                   console.info('lib.checkSessionToken(options): ' + checkSessionToken);
                               }
 
-                              if (checkSessionToken) {
+                              if (!checkSessionToken) {
                                   lib.setClientUserID(userId);
                                   return lib.sendCommand('send', 'user', options);
                               }
