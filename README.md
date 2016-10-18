@@ -23,9 +23,9 @@ npm i frontier
 ```
 
 ```html
-<script src="https://cdn.rawgit.com/4LOOPph/frontier/v1.0.14/dist/frontier.js"></script>
+<script src="https://cdn.rawgit.com/4LOOPph/frontier/v1.0.15/dist/frontier.js"></script>
 or
-<script src="https://cdn.rawgit.com/4LOOPph/frontier/v1.0.14/dist/frontier.min.js"></script>
+<script src="https://cdn.rawgit.com/4LOOPph/frontier/v1.0.15/dist/frontier.min.js"></script>
 ```
 **Note**:  frontier for  **LOCAL**  is not safe and usable for production nor staging test.
 

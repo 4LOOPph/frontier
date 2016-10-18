@@ -16640,6 +16640,7 @@ function isTokenExpired(token, offsetSeconds) {
 //===========================================================================================
 
 function FrontierLib() {
+    var self = this;
     return {
         clearSettings: function() {
             Cookies.remove('frontierAnalytics_Session');
@@ -16694,6 +16695,7 @@ function FrontierLib() {
         },
 
         setSessionID: function(session) {
+            console.log('setSessionID: ', session);
             return Cookies.set('frontierAnalytics_Session', session);
         },
 
@@ -16710,24 +16712,24 @@ function FrontierLib() {
         },
 
         isEnableDebugging: function() {
-          if(Cookies.get('frontierAnalytics_Debugging')){
-              return JSON.parse(Cookies.get('frontierAnalytics_Debugging'));
-          }else{
-              return false;
-          }
+            if (Cookies.get('frontierAnalytics_Debugging')) {
+                return JSON.parse(Cookies.get('frontierAnalytics_Debugging'));
+            } else {
+                return false;
+            }
         },
 
         IsInitialized: function() {
             var bool = true;
             var cookie = Cookies.get('frontierAnalytics_Session');
-            if(cookie && cookie == 'null'){
+            if (cookie && cookie == 'null') {
                 bool = false;
-            }else if(cookie && cookie == 'undefined'){
+            } else if (cookie && cookie == 'undefined') {
                 bool = false;
-            }else if(cookie == undefined){
-              bool = false;
-            }else if(cookie == null){
-              bool = false;
+            } else if (cookie == undefined) {
+                bool = false;
+            } else if (cookie == null) {
+                bool = false;
             }
             return bool;
         },
@@ -16787,7 +16789,7 @@ function FrontierLib() {
                 console.info('data: ', data);
             }
 
-            if(!data.sessionID){
+            if (!data.sessionID) {
                 data.sessionID = this.getSessionID();
             }
 
@@ -17019,23 +17021,30 @@ function FrontierLib() {
                 }
 
                 try {
+                    var d = new Date();
+                    data.currentDate = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+
                     xhr.open('POST', route, true);
                     xhr.setRequestHeader('accesscode', data.accessCode);
                     xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
                     xhr.send(JSON.stringify(data));
-
-                    if (xhr.status === 200 && xhr.statusText === 'OK') {
-                        var resp = JSON.parse(xhr.response);
-                        if (resp.statusCode == 200) {
-                            var result = resp.response;
-                            if (result.SessionID) {
-                                this.setSessionID(result.SessionID);
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState == 4) {
+                            if (xhr.status === 200 && xhr.statusText === 'OK') {
+                                var resp = JSON.parse(xhr.response);
+                                if (resp.statusCode == 200) {
+                                    var result = resp.response;
+                                    if (result.SessionID) {
+                                        // self.setSessionID(result.SessionID);
+                                         Cookies.set('frontierAnalytics_Session', result.SessionID);
+                                    }
+                                }
+                                return true;
+                            } else {
+                                return false;
                             }
                         }
-                        return true;
-                    } else {
-                        return false;
-                    }
+                    };
                 } catch (e) {
                     console.log('FRONTIER ERR: ', e);
                     return false;
@@ -17055,11 +17064,15 @@ function FrontierLib() {
                     xhr.setRequestHeader('accesscode', data.accessCode);
                     xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
                     xhr.send(JSON.stringify(data));
-                    if (xhr.status === 200 && xhr.statusText === 'OK') {
-                        return true;
-                    } else {
-                        return false;
-                    }
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState == 4) {
+                            if (xhr.status === 200 && xhr.statusText === 'OK') {
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        }
+                    };
                 } catch (e) {
                     console.log('FRONTIER ERR: ', e);
                     return false;
@@ -17247,6 +17260,9 @@ function FrontierLib() {
               }
 
               try {
+                  var d = new Date();
+                  requestData.currentDate = d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate();
+
                   var xhr = new XMLHttpRequest();
                   xhr.open('POST', API_HOST + API_VERSION + '/create', false);
                   xhr.setRequestHeader('accesscode', params.accessCode);
@@ -17276,52 +17292,55 @@ function FrontierLib() {
           setUserID: function(userId) {
               var options = {};
               var tmpUserId = lib.getClientUserID();
+              console.log('tmpUserId: ',tmpUserId);
               if (_.isEmpty(tmpUserId)) {
-                  if (userId) {
-                      if (typeof userId === 'string') {
-                          var IsInitialized = lib.IsInitialized();
 
-                          options.trackerName = lib.getClientTrackerName();
-                          options.accessCode = lib.getClientID();
-                          options.viewportSize = lib.getPlatformViewPortSize();
-                          options.screenResolution = lib.getScreenResolution();
-                          options.screenColors = lib.getScreenColorDepth();
-                          options.language = lib.getPlatformLanguage();
-                          options.deviceID = generateUUID();
-                          options.deviceName = lib.getDeviceName();
-                          options.deviceModel = lib.getDeviceModel();
-                          options.deviceBrand = lib.getDeviceBrand();
-                          options.osName = lib.getOperatingSystem();
-                          options.osVersion = lib.getPlatformOperatingSystemVersion();
-                          options.appName = lib.getAppName();
-                          options.appID = lib.getAppID();
-                          options.appVersion = lib.getAppVersion();
-                          options.appInstallerID = lib.getAppID() + '-' + lib.getAppVersion();
-                          options.userId = userId;
+              }
 
-                          if (IsInitialized) {
-                              var sessionID = lib.getSessionID();
-                              if ((sessionID !== 'null')) {
-                                  options.sessionID = sessionID;
+              if (userId) {
+                  if (typeof userId === 'string') {
+                      var IsInitialized = lib.IsInitialized();
+
+                      options.trackerName = lib.getClientTrackerName();
+                      options.accessCode = lib.getClientID();
+                      options.viewportSize = lib.getPlatformViewPortSize();
+                      options.screenResolution = lib.getScreenResolution();
+                      options.screenColors = lib.getScreenColorDepth();
+                      options.language = lib.getPlatformLanguage();
+                      options.deviceID = generateUUID();
+                      options.deviceName = lib.getDeviceName();
+                      options.deviceModel = lib.getDeviceModel();
+                      options.deviceBrand = lib.getDeviceBrand();
+                      options.osName = lib.getOperatingSystem();
+                      options.osVersion = lib.getPlatformOperatingSystemVersion();
+                      options.appName = lib.getAppName();
+                      options.appID = lib.getAppID();
+                      options.appVersion = lib.getAppVersion();
+                      options.appInstallerID = lib.getAppID() + '-' + lib.getAppVersion();
+                      options.userId = userId;
+
+                      if (IsInitialized) {
+                          var sessionID = lib.getSessionID();
+                          if ((sessionID !== 'null')) {
+                              options.sessionID = sessionID;
+                          }
+
+                          if (sessionID !== 'null') {
+                              var checkSessionToken = lib.checkSessionToken(options);
+                              if (lib.isEnableDebugging()) {
+                                  console.info('lib.checkSessionToken(options): ' + checkSessionToken);
                               }
 
-                              if (sessionID !== 'null') {
-                                  var checkSessionToken = lib.checkSessionToken(options);
-                                  if (lib.isEnableDebugging()) {
-                                      console.info('lib.checkSessionToken(options): ' + checkSessionToken);
-                                  }
-
-                                  if (!checkSessionToken) {
-                                      lib.setClientUserID(userId);
-                                      return lib.sendCommand('send', 'user', options);
-                                  }
-                              } else {
+                              if (!checkSessionToken) {
+                                  lib.setClientUserID(userId);
                                   return lib.sendCommand('send', 'user', options);
                               }
                           } else {
-                              lib.setClientUserID(userId);
                               return lib.sendCommand('send', 'user', options);
                           }
+                      } else {
+                          lib.setClientUserID(userId);
+                          return lib.sendCommand('send', 'user', options);
                       }
                   }
               }
