@@ -16662,7 +16662,10 @@ function FrontierLib() {
             if (this.isEnableDebugging()) {
                 console.info('Analytics Signout');
             }
-            return Cookies.remove('frontierAnalytics_Session');
+            Cookies.remove('frontierAnalytics_userId');
+            Cookies.remove('frontierAnalytics_Session');
+
+            return true;
         },
 
         setClientID: function(accessCode) {
@@ -16706,7 +16709,11 @@ function FrontierLib() {
         },
 
         isEnableDebugging: function() {
-            return JSON.parse(Cookies.get('frontierAnalytics_Debugging'));
+          if(Cookies.get('frontierAnalytics_Debugging')){
+              return JSON.parse(Cookies.get('frontierAnalytics_Debugging'));
+          }else{
+              return false;
+          }
         },
 
         IsInitialized: function() {
@@ -17160,7 +17167,7 @@ function FrontierLib() {
 
               if (params.accessCode) {
                   lib.setClientID(params.accessCode);
-              }else{
+              } else {
                   console.error('Frontier: Invalid or Missing Access Code parameter');
                   return false;
               }
@@ -17169,9 +17176,9 @@ function FrontierLib() {
                   if (typeof params.trackerName === 'string') {
                       lib.setClientTrackerName(params.trackerName);
                   }
-              }else{
-                console.error('Frontier: Invalid or Missing Tracker Name parameter');
-                return false;
+              } else {
+                  console.error('Frontier: Invalid or Missing Tracker Name parameter');
+                  return false;
               }
 
               if (params.encoding) {
@@ -17179,6 +17186,33 @@ function FrontierLib() {
                       lib.setEncode(params.encoding);
                   }
               }
+
+
+              if (!Cookies.get('frontierAnalytics_Debugging')) {
+                  Cookies.set('frontierAnalytics_Debugging', false);
+              }
+
+              if (!Cookies.get('frontierAnalytics_trackView')) {
+                  Cookies.set('frontierAnalytics_trackView', false);
+              }
+
+              if (!Cookies.get('frontierAnalytics_trackEvent')) {
+                  Cookies.set('frontierAnalytics_trackEvent', false);
+              }
+
+              if (!Cookies.get('frontierAnalytics_trackPage')) {
+                  Cookies.set('frontierAnalytics_trackPage', false);
+              }
+
+              if (!Cookies.get('frontierAnalytics_trackApp')) {
+                  Cookies.set('frontierAnalytics_trackApp', false);
+              }
+
+              if (!Cookies.get('frontierAnalytics_trackDevice')) {
+                  Cookies.set('frontierAnalytics_trackDevice', false);
+              }
+
+
 
               var IsInitialized = lib.IsInitialized();
               if (IsInitialized) {
@@ -17205,16 +17239,11 @@ function FrontierLib() {
               requestData.appID = lib.getAppID();
               requestData.appVersion = lib.getAppVersion();
               requestData.appInstallerID = lib.getAppID() + '-' + lib.getAppVersion();
+              requestData.userId = lib.getClientUserID();
 
               if (lib.isEnableDebugging()) {
                   console.info('requestData: ', requestData);
               }
-
-              if (params.userId) {
-                  requestData.userId = params.userId;
-                  lib.setClientUserID(params.userId);
-              }
-
 
               try {
                   var xhr = new XMLHttpRequest();
@@ -17227,9 +17256,9 @@ function FrontierLib() {
                       var resp = JSON.parse(xhr.response);
                       lib.setSessionID(resp.SessionID);
 
-                      if (params.userId) {
-                          if (typeof params.userId === 'string') {
-                              this.setUserID(params.userId);
+                      if (resp.userId) {
+                          if (typeof resp.userId === 'string') {
+                              this.setClientUserID(resp.userId);
                           }
                       }
 
@@ -17248,16 +17277,27 @@ function FrontierLib() {
               if (userId) {
                   if (typeof userId === 'string') {
                       var IsInitialized = lib.IsInitialized();
+
+                      options.trackerName = lib.getClientTrackerName();
+                      options.accessCode = lib.getClientID();
+                      options.viewportSize = lib.getPlatformViewPortSize();
+                      options.screenResolution = lib.getScreenResolution();
+                      options.screenColors = lib.getScreenColorDepth();
+                      options.language = lib.getPlatformLanguage();
+                      options.deviceID = generateUUID();
+                      options.deviceName = lib.getDeviceName();
+                      options.deviceModel = lib.getDeviceModel();
+                      options.deviceBrand = lib.getDeviceBrand();
+                      options.osName = lib.getOperatingSystem();
+                      options.osVersion = lib.getPlatformOperatingSystemVersion();
+                      options.appName = lib.getAppName();
+                      options.appID = lib.getAppID();
+                      options.appVersion = lib.getAppVersion();
+                      options.appInstallerID = lib.getAppID() + '-' + lib.getAppVersion();
+                      options.userId = userId;
+
                       if (IsInitialized) {
-
                           var sessionID = lib.getSessionID();
-
-                          options.trackerName = lib.getClientTrackerName();
-                          options.accessCode = lib.getClientID();
-                          options.deviceID = generateUUID();
-                          options.appID = lib.getAppID();
-                          options.userId = userId;
-
                           if ((sessionID !== 'null')) {
                               options.sessionID = sessionID;
                           }
@@ -17275,6 +17315,9 @@ function FrontierLib() {
                           } else {
                               return lib.sendCommand('send', 'user', options);
                           }
+                      }else{
+                        lib.setClientUserID(userId);
+                        return lib.sendCommand('send', 'user', options);
                       }
                   }
               }
@@ -17299,12 +17342,14 @@ function FrontierLib() {
               }
 
               var IsInitialized = lib.IsInitialized();
+              var IsEnableTrackPage = lib.IsEnableTrackPage();
+
               if (IsInitialized) {
                   options.trackerName = lib.getClientTrackerName();
                   options.accessCode = lib.getClientID();
                   options.userId = lib.getClientUserID();
 
-                  if (lib.IsEnableTrackPage()) {
+                  if (IsEnableTrackPage) {
                       var checkSessionToken = lib.checkSessionToken(options);
                       if (lib.isEnableDebugging()) {
                           console.info('lib.checkSessionToken(options): ' + checkSessionToken);
@@ -17343,12 +17388,14 @@ function FrontierLib() {
               }
 
               var IsInitialized = lib.IsInitialized();
+              var IsEnableTrackEvent = lib.IsEnableTrackEvent();
+
               if (IsInitialized) {
                   options.trackerName = lib.getClientTrackerName();
                   options.accessCode = lib.getClientID();
                   options.userId = lib.getClientUserID();
 
-                  if (lib.IsEnableTrackEvent()) {
+                  if (IsEnableTrackEvent) {
                       var checkSessionToken = lib.checkSessionToken(options);
                       if (lib.isEnableDebugging()) {
                           console.info('lib.checkSessionToken(options): ' + checkSessionToken);
