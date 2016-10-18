@@ -17275,50 +17275,53 @@ function FrontierLib() {
 
           setUserID: function(userId) {
               var options = {};
-              if (userId) {
-                  if (typeof userId === 'string') {
-                      var IsInitialized = lib.IsInitialized();
+              var tmpUserId = lib.getClientUserID();
+              if (_.isEmpty(tmpUserId)) {
+                  if (userId) {
+                      if (typeof userId === 'string') {
+                          var IsInitialized = lib.IsInitialized();
 
-                      options.trackerName = lib.getClientTrackerName();
-                      options.accessCode = lib.getClientID();
-                      options.viewportSize = lib.getPlatformViewPortSize();
-                      options.screenResolution = lib.getScreenResolution();
-                      options.screenColors = lib.getScreenColorDepth();
-                      options.language = lib.getPlatformLanguage();
-                      options.deviceID = generateUUID();
-                      options.deviceName = lib.getDeviceName();
-                      options.deviceModel = lib.getDeviceModel();
-                      options.deviceBrand = lib.getDeviceBrand();
-                      options.osName = lib.getOperatingSystem();
-                      options.osVersion = lib.getPlatformOperatingSystemVersion();
-                      options.appName = lib.getAppName();
-                      options.appID = lib.getAppID();
-                      options.appVersion = lib.getAppVersion();
-                      options.appInstallerID = lib.getAppID() + '-' + lib.getAppVersion();
-                      options.userId = userId;
+                          options.trackerName = lib.getClientTrackerName();
+                          options.accessCode = lib.getClientID();
+                          options.viewportSize = lib.getPlatformViewPortSize();
+                          options.screenResolution = lib.getScreenResolution();
+                          options.screenColors = lib.getScreenColorDepth();
+                          options.language = lib.getPlatformLanguage();
+                          options.deviceID = generateUUID();
+                          options.deviceName = lib.getDeviceName();
+                          options.deviceModel = lib.getDeviceModel();
+                          options.deviceBrand = lib.getDeviceBrand();
+                          options.osName = lib.getOperatingSystem();
+                          options.osVersion = lib.getPlatformOperatingSystemVersion();
+                          options.appName = lib.getAppName();
+                          options.appID = lib.getAppID();
+                          options.appVersion = lib.getAppVersion();
+                          options.appInstallerID = lib.getAppID() + '-' + lib.getAppVersion();
+                          options.userId = userId;
 
-                      if (IsInitialized) {
-                          var sessionID = lib.getSessionID();
-                          if ((sessionID !== 'null')) {
-                              options.sessionID = sessionID;
-                          }
-
-                          if (sessionID !== 'null') {
-                              var checkSessionToken = lib.checkSessionToken(options);
-                              if (lib.isEnableDebugging()) {
-                                  console.info('lib.checkSessionToken(options): ' + checkSessionToken);
+                          if (IsInitialized) {
+                              var sessionID = lib.getSessionID();
+                              if ((sessionID !== 'null')) {
+                                  options.sessionID = sessionID;
                               }
 
-                              if (!checkSessionToken) {
-                                  lib.setClientUserID(userId);
+                              if (sessionID !== 'null') {
+                                  var checkSessionToken = lib.checkSessionToken(options);
+                                  if (lib.isEnableDebugging()) {
+                                      console.info('lib.checkSessionToken(options): ' + checkSessionToken);
+                                  }
+
+                                  if (!checkSessionToken) {
+                                      lib.setClientUserID(userId);
+                                      return lib.sendCommand('send', 'user', options);
+                                  }
+                              } else {
                                   return lib.sendCommand('send', 'user', options);
                               }
                           } else {
+                              lib.setClientUserID(userId);
                               return lib.sendCommand('send', 'user', options);
                           }
-                      }else{
-                        lib.setClientUserID(userId);
-                        return lib.sendCommand('send', 'user', options);
                       }
                   }
               }
